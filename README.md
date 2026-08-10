@@ -21,6 +21,13 @@ Each consuming repo commits a **copy** of these files under its own
 `conventions/`, kept current by a scheduled GitHub Action that opens a pull
 request whenever this repo changes.
 
+A repo syncs only the files it needs — the workflow names them explicitly, so
+a TypeScript project with no React syncs `typescript.md` and `git.md` and
+skips the rest. Because of that, a file here may reference the ones it builds
+on, but never the ones that build on it: `react.md` may point at
+`typescript.md`, while `typescript.md` names no framework file, since it
+cannot know which of them a given repo has.
+
 The files are copied rather than referenced because agent instruction files
 are read at session start, before any dependency is installed — a remote or
 web session clones the repo and begins immediately, so anything not committed

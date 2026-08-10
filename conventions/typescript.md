@@ -1,7 +1,7 @@
 # TypeScript / JavaScript conventions
 
-Language-level rules, independent of framework or project. React-specific
-rules live in `./react.md`.
+Language-level rules, independent of framework or project. Framework-specific
+conventions live in their own files alongside this one and build on it.
 
 - **File naming**: kebab-case for utils and plain modules (`auth-utils.ts`).
 - **Exports**: Named exports. No default exports, unless something requires

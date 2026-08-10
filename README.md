@@ -10,14 +10,23 @@ AI agents and humans.
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, and accessibility rules |
 | [`conventions/playwright.md`](conventions/playwright.md) | Test layout, test IDs, accessibility scans |
+| [`conventions/git.md`](conventions/git.md) | Branch naming and pull request review practice |
 
-`react.md` and `playwright.md` both build on `typescript.md`.
+`react.md` and `playwright.md` both build on `typescript.md`. `git.md` stands
+alone and applies to every repo, whatever the stack.
 
 ## How consuming repos use these
 
 Each consuming repo commits a **copy** of these files under its own
 `conventions/`, kept current by a scheduled GitHub Action that opens a pull
 request whenever this repo changes.
+
+A repo syncs only the files it needs — the workflow names them explicitly, so
+a TypeScript project with no React syncs `typescript.md` and `git.md` and
+skips the rest. Because of that, a file here may reference the ones it builds
+on, but never the ones that build on it: `react.md` may point at
+`typescript.md`, while `typescript.md` names no framework file, since it
+cannot know which of them a given repo has.
 
 The files are copied rather than referenced because agent instruction files
 are read at session start, before any dependency is installed — a remote or

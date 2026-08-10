@@ -80,10 +80,6 @@ Then, in the consuming repo:
 
 ### Notes
 
-- **Consumers track `@main`**, so a change to the sync takes effect on their
-  next run with nothing to release. The trade is that a broken push here
-  breaks every consumer's sync at once — this workflow is the one place in the
-  repo worth testing before merging.
 - **Permissions stay in the caller.** A called workflow cannot widen its own
   permissions, so `contents: write` and `pull-requests: write` have to be
   declared by each consumer.

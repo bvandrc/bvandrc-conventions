@@ -53,8 +53,6 @@ on:
   schedule:
     - cron: '0 9 * * 1' # Mondays, 09:00 UTC
   workflow_dispatch: # Allows manual triggering
-  repository_dispatch: # Sent by bvandrc-conventions when it changes
-    types: [conventions-updated]
 
 permissions:
   contents: write
@@ -82,8 +80,6 @@ Then, in the consuming repo:
 
 ### Notes
 
-- **Pin to a tag, not a branch.** `@v1` rather than `@main`: a bad push here
-  would otherwise break the sync in every project at once.
 - **Permissions stay in the caller.** A called workflow cannot widen its own
   permissions, so `contents: write` and `pull-requests: write` have to be
   declared by each consumer.
@@ -92,9 +88,6 @@ Then, in the consuming repo:
   don't stack manual commits on an open sync PR — the next run discards them.
 - Scheduled workflows are disabled after 60 days of repository inactivity;
   `workflow_dispatch` is the manual recovery.
-- The `repository_dispatch` trigger is inert until something sends the event.
-  Doing so needs a workflow here holding a PAT with write access to each
-  consumer, which does not exist yet.
 
 ## Consuming repos
 

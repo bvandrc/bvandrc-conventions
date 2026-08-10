@@ -18,6 +18,8 @@ on:
 env:
   CONVENTIONS_REPO: bvandrc/bvandrc-conventions
   SYNC_MESSAGE: 'chore: sync convention docs from bvandrc-conventions'
+  SRC_DIR: .conventions-src
+  DEST_DIR: conventions
 
 jobs:
   sync:
@@ -36,21 +38,21 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: ${{ env.CONVENTIONS_REPO }}
-          path: .conventions-src
+          path: ${{ env.SRC_DIR }}
 
-      # Delete first so a file dropped from `files`, or retired upstream,
-      # disappears downstream instead of lingering. The source checkout is
-      # removed so it is not swept into the commit.
       - name: Copy conventions into place
         env:
           FILES: ${{ inputs.files }}
         run: |
-          rm -rf conventions
-          mkdir -p conventions
+          # Delete first so a file dropped from `files`, or retired upstream,
+          # disappears downstream instead of lingering.
+          rm -rf "$DEST_DIR"
+          mkdir -p "$DEST_DIR"
           for file in $FILES; do
-            cp ".conventions-src/conventions/$file" "conventions/$file"
+            cp "$SRC_DIR/conventions/$file" "$DEST_DIR/$file"
           done
-          rm -rf .conventions-src
+          # Drop the source checkout so it is not swept into the commit.
+          rm -rf "$SRC_DIR"
 
       - name: Open pull request on drift
         uses: peter-evans/create-pull-request@v7

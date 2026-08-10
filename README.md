@@ -37,6 +37,58 @@ pull request diffs instead of appearing silently.
 **Edit here, never downstream.** A downstream edit is overwritten by the next
 sync. Change a rule in this repo and let the sync PR carry it out.
 
+## Setting up a new consumer
+
+The sync logic lives here, in
+[`.github/workflows/sync.yml`](.github/workflows/sync.yml), as a reusable
+workflow. A consuming repo only declares when to run and which files it wants,
+so a fix to the sync itself reaches every project without editing them.
+
+Add `.github/workflows/sync-conventions.yml` to the repo:
+
+```yaml
+name: Sync Conventions
+
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Mondays, 09:00 UTC
+  workflow_dispatch: # Allows manual triggering
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    uses: bvandrc/bvandrc-conventions/.github/workflows/sync.yml@main
+    with:
+      files: typescript.md react.md playwright.md git.md
+```
+
+Then, in the consuming repo:
+
+1. Set `files` to the subset that repo needs. A backend TypeScript project
+   might use `typescript.md git.md`.
+2. Import the same files from its `CLAUDE.md`, one `@conventions/<file>` per
+   line. The `files` input decides what exists on disk; the imports decide
+   what Claude loads, and the two should match.
+3. Enable **Settings → Actions → General → Allow GitHub Actions to create and
+   approve pull requests**. It is off by default, and without it the run fails
+   with `GitHub Actions is not permitted to create or approve pull requests`
+   *after* pushing the branch — so the sync looks half-done.
+4. Run it once via **workflow_dispatch** to seed `conventions/`.
+
+### Notes
+
+- **Permissions stay in the caller.** A called workflow cannot widen its own
+  permissions, so `contents: write` and `pull-requests: write` have to be
+  declared by each consumer.
+- **Triggers stay in the caller** too, so cron frequency is a per-repo choice.
+- `peter-evans/create-pull-request` force-pushes its branch on every run, so
+  don't stack manual commits on an open sync PR — the next run discards them.
+- Scheduled workflows are disabled after 60 days of repository inactivity;
+  `workflow_dispatch` is the manual recovery.
+
 ## Consuming repos
 
 - [bvandrc-project-template-react-frontend](https://github.com/bvandrc/bvandrc-project-template-react-frontend)

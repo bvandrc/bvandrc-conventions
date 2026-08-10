@@ -10,8 +10,10 @@ AI agents and humans.
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, and accessibility rules |
 | [`conventions/playwright.md`](conventions/playwright.md) | Test layout, test IDs, accessibility scans |
+| [`conventions/git.md`](conventions/git.md) | Branch naming and pull request review practice |
 
-`react.md` and `playwright.md` both build on `typescript.md`.
+`react.md` and `playwright.md` both build on `typescript.md`. `git.md` stands
+alone and applies to every repo, whatever the stack.
 
 ## How consuming repos use these
 

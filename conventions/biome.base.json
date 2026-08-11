@@ -64,6 +64,7 @@
         "useNumericSeparators": "error",
         "useObjectSpread": "error",
         "useReadonlyClassProperties": "error",
+        "useSelfClosingElements": "error",
         "useShorthandAssign": "error"
       },
       "suspicious": {

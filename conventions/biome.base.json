@@ -1,5 +1,4 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.7/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -29,7 +28,6 @@
         "noUnusedVariables": "error"
       },
       "style": {
-        "noDefaultExport": "error",
         "useImportType": "error"
       }
     }

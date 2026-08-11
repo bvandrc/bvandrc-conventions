@@ -89,50 +89,29 @@ Then, in the consuming repo:
 { "extends": ["./conventions/biome.base.json"] }
 ```
 
-It is distributed by copy rather than as an npm package so there is one
-mechanism to understand, and so config changes land in the same sync PR as the
-prose they enforce. The tradeoff is that upgrades arrive on the sync schedule
-instead of being pinned per repo — if a repo ever needs to hold a version
-back, that is the signal to move the config to a package.
+It is distributed by copy rather than as an npm package to match the way
+convention `.md` files are synced.
 
 **What belongs where.** The base holds settings every repo agrees on:
-formatter style, `recommended`, and the rules that make `typescript.md`
-enforceable rather than aspirational.
-
-| Convention | Rule |
-| --- | --- |
-| Named exports, no defaults | `style/noDefaultExport` |
-| `import type` for type-only imports | `style/useImportType` |
+formatter style, `recommended`, and `style/useImportType` for the
+`import type` rule in `typescript.md`.
 
 The repo's own `biome.json` holds everything the shared file cannot know:
-`files.includes`, test-file `overrides`, and framework rules. File naming is
-deliberately *not* enforced — `typescript.md` wants kebab-case for modules
-while `react.md` wants PascalCase components and camelCase hooks, so
-`useFilenamingConvention` belongs downstream where the mix is known. Same for
-the `noDefaultExport` escape hatch: a repo with lazy-loaded route components
-overrides the rule for those paths locally.
+`files.includes`, test-file `overrides`, and framework rules. Note that
+`useFilenamingConvention` and `noDefaultExport` are not included, as these may
+vary per repo, despite the verbiage in our conventions files.
 
-**Validating it here.** This repo installs Biome itself and keeps a `biome.json`
-that extends the base, so the shim consuming repos write is dogfooded and the
-base config is checked before it syncs anywhere:
+**Validating it here.**
 
 ```bash
 pnpm install
 pnpm check      # pnpm check:fix to apply
 ```
 
-An unknown rule, a misspelled key, or a schema the installed Biome no longer
-accepts fails the command — the config is validated, not just parsed.
-
-Two things to know:
-
-- **Sync it alongside `typescript.md`.** The sync deletes `conventions/`
-  before copying, so a repo that lists `typescript.md` but forgets
-  `biome.base.json` gets a `biome.json` pointing at a file that no longer
-  exists. The failure is loud, but avoidable.
-- **The `$schema` version is pinned** in the base file and tracks the Biome
-  version this repo installs. Bump both together — `pnpm check` fails if the
-  config drifts past what that version accepts.
+**Sync it alongside `typescript.md`.** The sync deletes `conventions/` before
+copying, so a repo that lists `typescript.md` but forgets `biome.base.json`
+gets a `biome.json` pointing at a file that no longer exists. The failure is
+loud, but avoidable.
 
 ### Notes
 

@@ -39,7 +39,8 @@
         "noFloatingPromises": "error"
       },
       "performance": {
-        "noAccumulatingSpread": "error"
+        "noAccumulatingSpread": "error",
+        "noNamespaceImport": "error"
       },
       "style": {
         "noCommonJs": "error",

@@ -42,6 +42,7 @@
         "useArrayLiterals": "error",
         "useAsConstAssertion": "error",
         "useAtIndex": "error",
+        "useConsistentObjectDefinitions": "error",
         "useImportType": "error",
         "useNumericSeparators": "error",
         "useObjectSpread": "error",

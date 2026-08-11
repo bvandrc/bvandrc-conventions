@@ -11,9 +11,11 @@ AI agents and humans.
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, and accessibility rules |
 | [`conventions/playwright.md`](conventions/playwright.md) | Test layout, test IDs, accessibility scans |
 | [`conventions/git.md`](conventions/git.md) | Branch naming and pull request review practice |
+| [`conventions/biome.base.json`](conventions/biome.base.json) | Shared Biome lint and format settings |
 
 `react.md` and `playwright.md` both build on `typescript.md`. `git.md` stands
-alone and applies to every repo, whatever the stack.
+alone and applies to every repo, whatever the stack. `biome.base.json` is the
+executable half of `typescript.md` — sync the two together.
 
 ## How consuming repos use these
 
@@ -62,7 +64,7 @@ jobs:
   sync:
     uses: bvandrc/bvandrc-conventions/.github/workflows/sync.yml@main
     with:
-      files: typescript.md react.md playwright.md git.md
+      files: typescript.md react.md playwright.md git.md biome.base.json
 ```
 
 Then, in the consuming repo:
@@ -77,6 +79,40 @@ Then, in the consuming repo:
    with `GitHub Actions is not permitted to create or approve pull requests`
    *after* pushing the branch — so the sync looks half-done.
 4. Run it once via **workflow_dispatch** to seed `conventions/`.
+
+## Biome config
+
+`biome.base.json` rides the same sync as the markdown: it lands in
+`conventions/` like everything else, and the repo's `biome.json` extends it.
+
+```json
+{ "extends": ["./conventions/biome.base.json"] }
+```
+
+It is distributed by copy rather than as an npm package to match the way
+convention `.md` files are synced.
+
+**What belongs where.** The base holds formatter style — including
+`indentWidth` and `lineWidth`, stated explicitly so they survive a change to
+Biome's defaults — and the rules it raises from warning to error, including
+`style/useImportType` for the `import type` rule in `typescript.md`.
+
+The repo's own `biome.json` holds everything the shared file cannot know:
+`files.includes`, test-file `overrides`, and framework rules. Note that
+`useFilenamingConvention` and `noDefaultExport` are not included, as these may
+vary per repo, despite the verbiage in our conventions files.
+
+**Validating it here.**
+
+```bash
+pnpm install
+pnpm check      # pnpm check:fix to apply
+```
+
+**Sync it alongside `typescript.md`.** The sync deletes `conventions/` before
+copying, so a repo that lists `typescript.md` but forgets `biome.base.json`
+gets a `biome.json` pointing at a file that no longer exists. The failure is
+loud, but avoidable.
 
 ### Notes
 

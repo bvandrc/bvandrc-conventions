@@ -92,10 +92,10 @@ Then, in the consuming repo:
 It is distributed by copy rather than as an npm package to match the way
 convention `.md` files are synced.
 
-**What belongs where.** The base holds only what differs from Biome's own
-defaults: formatter style, and the rules it raises from warning to error —
-including `style/useImportType` for the `import type` rule in
-`typescript.md`.
+**What belongs where.** The base holds formatter style — including
+`indentWidth` and `lineWidth`, stated explicitly so they survive a change to
+Biome's defaults — and the rules it raises from warning to error, including
+`style/useImportType` for the `import type` rule in `typescript.md`.
 
 The repo's own `biome.json` holds everything the shared file cannot know:
 `files.includes`, test-file `overrides`, and framework rules. Note that

@@ -1,0 +1,29 @@
+name: Check
+
+# Validates the shared Biome config before it can sync anywhere. The root
+# biome.json extends conventions/biome.base.json, so Biome parses the base as
+# part of its config graph — an unknown rule or misspelled key fails here.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  check:
+    name: Biome check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm check

@@ -112,14 +112,27 @@ while `react.md` wants PascalCase components and camelCase hooks, so
 the `noDefaultExport` escape hatch: a repo with lazy-loaded route components
 overrides the rule for those paths locally.
 
+**Validating it here.** This repo installs Biome itself and keeps a `biome.json`
+that extends the base, so the shim consuming repos write is dogfooded and the
+base config is checked before it syncs anywhere:
+
+```bash
+pnpm install
+pnpm check      # pnpm check:fix to apply
+```
+
+An unknown rule, a misspelled key, or a schema the installed Biome no longer
+accepts fails the command — the config is validated, not just parsed.
+
 Two things to know:
 
 - **Sync it alongside `typescript.md`.** The sync deletes `conventions/`
   before copying, so a repo that lists `typescript.md` but forgets
   `biome.base.json` gets a `biome.json` pointing at a file that no longer
   exists. The failure is loud, but avoidable.
-- **The `$schema` version is pinned** in the file and should track the Biome
-  version consuming repos install.
+- **The `$schema` version is pinned** in the base file and tracks the Biome
+  version this repo installs. Bump both together — `pnpm check` fails if the
+  config drifts past what that version accepts.
 
 ### Notes
 

@@ -21,8 +21,12 @@
     "rules": {
       "preset": "recommended",
       "correctness": {
-        "noUnusedImports": "error",
-        "noUnusedVariables": "error"
+        "noUnusedImports": { "level": "error", "fix": "safe" },
+        "noUnusedVariables": "error",
+        "useJsonImportAttributes": "error"
+      },
+      "nursery": {
+        "noFloatingPromises": "error"
       },
       "style": {
         "useImportType": "error"

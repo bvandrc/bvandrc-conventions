@@ -35,6 +35,7 @@
         "noAccumulatingSpread": "error"
       },
       "style": {
+        "noCommonJs": "error",
         "noParameterAssign": "error",
         "noSubstr": "error",
         "noUnusedTemplateLiteral": "error",
@@ -42,11 +43,17 @@
         "useArrayLiterals": "error",
         "useAsConstAssertion": "error",
         "useAtIndex": "error",
+        "useCollapsedElseIf": "error",
+        "useCollapsedIf": "error",
         "useConsistentObjectDefinitions": "error",
+        "useDefaultParameterLast": "error",
+        "useDefaultSwitchClause": "error",
+        "useEnumInitializers": "error",
         "useImportType": "error",
         "useNumberNamespace": "error",
         "useNumericSeparators": "error",
         "useObjectSpread": "error",
+        "useReadonlyClassProperties": "error",
         "useShorthandAssign": "error"
       },
       "suspicious": {

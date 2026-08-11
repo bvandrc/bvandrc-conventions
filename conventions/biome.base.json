@@ -30,6 +30,18 @@
       },
       "style": {
         "useImportType": "error"
+      },
+      "suspicious": {
+        "noConstantBinaryExpressions": "error",
+        "noDeprecatedImports": "error",
+        "noEmptyBlockStatements": "error",
+        "noEvolvingTypes": "error",
+        "noImportCycles": "error",
+        "noShadow": "error",
+        "noTsIgnore": "error",
+        "noUnassignedVariables": "error",
+        "noUselessEscapeInString": "error",
+        "useAwait": "error"
       }
     }
   }

@@ -29,7 +29,14 @@
         "noFloatingPromises": "error"
       },
       "style": {
-        "useImportType": "error"
+        "noUnusedTemplateLiteral": "error",
+        "noYodaExpression": "error",
+        "useAsConstAssertion": "error",
+        "useAtIndex": "error",
+        "useImportType": "error",
+        "useNumericSeparators": "error",
+        "useObjectSpread": "error",
+        "useShorthandAssign": "error"
       },
       "suspicious": {
         "noConstantBinaryExpressions": "error",

@@ -21,6 +21,8 @@
     "rules": {
       "preset": "recommended",
       "correctness": {
+        "noUndeclaredDependencies": "error",
+        "noUnusedFunctionParameters": "error",
         "noUnusedImports": { "level": "error", "fix": "safe" },
         "noUnusedVariables": "error",
         "useJsonImportAttributes": "error",

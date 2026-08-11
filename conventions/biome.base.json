@@ -41,6 +41,7 @@
       },
       "performance": {
         "noAccumulatingSpread": "error",
+        "noBarrelFile": "error",
         "noDelete": "error",
         "noNamespaceImport": "error"
       },

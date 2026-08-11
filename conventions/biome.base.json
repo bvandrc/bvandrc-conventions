@@ -44,6 +44,7 @@
         "useAtIndex": "error",
         "useConsistentObjectDefinitions": "error",
         "useImportType": "error",
+        "useNumberNamespace": "error",
         "useNumericSeparators": "error",
         "useObjectSpread": "error",
         "useShorthandAssign": "error"

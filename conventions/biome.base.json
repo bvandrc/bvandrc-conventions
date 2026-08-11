@@ -31,9 +31,15 @@
       "nursery": {
         "noFloatingPromises": "error"
       },
+      "performance": {
+        "noAccumulatingSpread": "error"
+      },
       "style": {
+        "noParameterAssign": "error",
+        "noSubstr": "error",
         "noUnusedTemplateLiteral": "error",
         "noYodaExpression": "error",
+        "useArrayLiterals": "error",
         "useAsConstAssertion": "error",
         "useAtIndex": "error",
         "useImportType": "error",

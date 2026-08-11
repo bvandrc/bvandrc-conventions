@@ -21,7 +21,9 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   inside JSX. See `VARIANT_CLASSES` in `Button.tsx`, `TONE_CLASSES` in
   `Badge.tsx`.
 - **Tailwind sizing**: Use the `size-X` Tailwind class, not `w-X h-X`.
-- **usehooks-ts**: Keep in mind that we can use this package for hooks.
+- **usehooks-ts**: Keep in mind that we can use this package for hooks
+  (`useEventListener`, `useMediaQuery`, ...). Never use `useBoolean` — plain
+  `useState` is no more code.
 - **Test IDs**: Use `data-testid` as the HTML attribute *and* as the prop name
   in component interfaces (not `testId`).
 - **Accessible names**: If an `aria-label`'s value would just repeat text

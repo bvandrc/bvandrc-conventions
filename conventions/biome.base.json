@@ -23,7 +23,8 @@
       "correctness": {
         "noUnusedImports": { "level": "error", "fix": "safe" },
         "noUnusedVariables": "error",
-        "useJsonImportAttributes": "error"
+        "useJsonImportAttributes": "error",
+        "useParseIntRadix": "off"
       },
       "nursery": {
         "noFloatingPromises": "error"

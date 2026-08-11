@@ -60,6 +60,7 @@
         "useDefaultParameterLast": "error",
         "useDefaultSwitchClause": "error",
         "useEnumInitializers": "error",
+        "useFilenamingConvention": "error",
         "useImportType": "error",
         "useNumberNamespace": "error",
         "useNumericSeparators": "error",

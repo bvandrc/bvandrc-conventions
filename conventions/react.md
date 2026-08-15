@@ -8,12 +8,14 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
 - **Components**: Arrow-function `const` with a named export. Default exports
   only where something requires one (e.g. page components for lazy-loaded
   routes).
-- **Prop types**: Compose from DOM prop types — extend them, or `Pick`/`Omit`
-  the parts you need — rather than re-declaring `className`, `type`, `href`,
-  etc. The same goes for component props, our own and those from external
-  packages: when a component passes props through to another component,
-  export the inner component's props as `<ComponentName>Props` and compose
-  from them with `Pick`/`Omit` rather than re-declaring the fields.
+- **DOM prop types**: Compose from DOM prop types — extend them, or
+  `Pick`/`Omit` the parts you need — rather than re-declaring `className`,
+  `type`, `href`, etc.
+- **Component prop types**: Compose from other components' props too, ours and
+  those from external packages. When a component passes props through to
+  another component, export the inner component's props as
+  `<ComponentName>Props` and compose from them with `Pick`/`Omit` rather than
+  re-declaring the fields.
 - **Spreading props**: Spread the rest onto the element when there are many
   pass-through props; for one or two, name them explicitly.
 - **Variant styling**: Map variants to classes in a module-level constant

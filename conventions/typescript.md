@@ -17,7 +17,7 @@ conventions live in their own files alongside this one and build on it.
   - camelCase for function-valued keys (e.g.
     `SELECTORS.TASK_CARD.rankFieldBadge(field)`).
 - **Exhaustive records**: Any record keyed by a union — constant or built at
-  runtime — should be declared with `satisfies Record<Union, T>` so a missing
+  runtime — should be declared with `satisfies Record<UnionKeys, ValuesType>` so a missing
   key is a type error.
 - **Comments/JSDoc**: Describe *what* and *why* from the caller's perspective.
   Don't restate implementation or repeat what the type signature conveys. Keep

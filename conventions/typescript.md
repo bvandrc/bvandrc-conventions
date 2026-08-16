@@ -13,19 +13,16 @@ conventions live in their own files alongside this one and build on it.
     - UPPER_CASE for the constant's name.
     - UPPER_CASE for keys that name entries (namespace/enum-style, e.g.
       `ROUTES.HOME`, `SELECTORS.TASK_FORM.SUBMIT_BTN`).
-    - camelCase for keys that are typed properties of an entry (e.g. `color`,
+    - camelCase for keys that are typed properties of an entry, where the
+      casing is required to satisfy a type declared elsewhere (e.g. `color`,
       `icon` in `FEATURES`).
     - camelCase for function-valued keys (e.g.
       `SELECTORS.TASK_CARD.rankFieldBadge(field)`).
-  - **Exhaustive maps**: When a value is keyed by a union, declare the map at
-    module level with `satisfies Record<Variant, string>` so a missing key is
-    a type error.
-- **Comments/JSDoc**:
-  - Describe *what* and *why* from the caller's perspective.
-  - Don't restate implementation.
-  - Don't repeat what the type signature conveys.
-  - Keep to 1–2 lines.
-  - No hedge prefixes.
+  - **Exhaustive maps**: When a value is keyed by a union, declare the map
+    with `satisfies Record<Variant, string>` so a missing key is a type error.
+- **Comments/JSDoc**: Describe *what* and *why* from the caller's perspective.
+  Don't restate implementation or repeat what the type signature conveys. Keep
+  to 1–2 lines. No hedge prefixes.
 - **Tooling**
   - **Linting and formatting**: Biome is the linter *and* formatter — no
     eslint/prettier here. Shared rules live in `./biome.base.json`, which the

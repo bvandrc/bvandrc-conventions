@@ -8,7 +8,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
 - **Components**: Arrow-function `const` with a named export. Default exports
   only where something requires one (e.g. page components for lazy-loaded
   routes).
-- **Props**
+- **Component props**
   - **DOM prop types**: When a component wraps a DOM element and passes props
     through to it (e.g. `className`, `type`, `href`, etc.), compose from that element's prop types — extend them, or `Pick`/`Omit` the parts you need — rather than re-declaring the fields.
   - **Component prop types**: Same goes for when a component passes props through to another

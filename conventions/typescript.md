@@ -14,8 +14,7 @@ conventions live in their own files alongside this one and build on it.
     - UPPER_CASE for keys that name entries (namespace/enum-style, e.g.
       `ROUTES.HOME`, `SELECTORS.TASK_FORM.SUBMIT_BTN`).
     - camelCase for keys that are typed properties of an entry, where the
-      casing is required to satisfy a type declared elsewhere (e.g. `color`,
-      `icon` in `FEATURES`).
+      casing is required to satisfy a type declared elsewhere.
     - camelCase for function-valued keys (e.g.
       `SELECTORS.TASK_CARD.rankFieldBadge(field)`).
   - **Exhaustive maps**: When a value is keyed by a union, declare the map

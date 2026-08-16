@@ -10,7 +10,7 @@ on:
       files:
         description: >-
           Space-separated convention files to sync, e.g.
-          "typescript.md react.md git.md". Names must exist in conventions/
+          "typescript.md react.md all.md". Names must exist in conventions/
           in this repo; a missing name fails the run.
         required: true
         type: string

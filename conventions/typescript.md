@@ -8,17 +8,17 @@ conventions live in their own files alongside this one and build on it.
   - **Exports**: Named exports. No default exports, unless something requires
     one.
   - **Type-only imports**: Use `import type` for imports only used as types.
-- **Constant objects and maps**
-  - **Casing**:
-    - UPPER_CASE for the constant's name.
-    - UPPER_CASE for keys that name entries (namespace/enum-style, e.g.
-      `ROUTES.HOME`, `SELECTORS.TASK_FORM.SUBMIT_BTN`).
-    - camelCase for keys that are typed properties of an entry, where the
-      casing is required to satisfy a type declared elsewhere.
-    - camelCase for function-valued keys (e.g.
-      `SELECTORS.TASK_CARD.rankFieldBadge(field)`).
-  - **Exhaustive maps**: When a value is keyed by a union, declare the map
-    with `satisfies Record<Variant, string>` so a missing key is a type error.
+- **Constant objects**:
+  - UPPER_CASE for the constant's name.
+  - UPPER_CASE for keys that name entries (namespace/enum-style, e.g.
+    `ROUTES.HOME`, `SELECTORS.TASK_FORM.SUBMIT_BTN`).
+  - camelCase for keys that are typed properties of an entry, where the casing
+    is required to satisfy a type declared elsewhere.
+  - camelCase for function-valued keys (e.g.
+    `SELECTORS.TASK_CARD.rankFieldBadge(field)`).
+- **Exhaustive records**: Any record keyed by a union — constant or built at
+  runtime — should be declared with `satisfies Record<Union, T>` so a missing
+  key is a type error.
 - **Comments/JSDoc**: Describe *what* and *why* from the caller's perspective.
   Don't restate implementation or repeat what the type signature conveys. Keep
   to 1–2 lines. No hedge prefixes.

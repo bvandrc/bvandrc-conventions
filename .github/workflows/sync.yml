@@ -57,19 +57,12 @@ jobs:
       # A run on the default branch has nowhere safe to commit, so it proposes
       # the sync as a pull request. A manual run on any other branch is someone
       # pulling conventions into work already in progress, so it commits there.
-      - name: Decide where the sync lands
-        id: target
-        env:
-          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-        run: |
-          # Empty would silently mean "not the default branch", and push to it.
-          test -n "$DEFAULT_BRANCH"
-          # Assignments both succeed, so the || arm can't swallow a real failure.
-          [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ] && in_place=false || in_place=true
-          echo "commit-in-place=$in_place" >> "$GITHUB_OUTPUT"
-
+      # The leading truthiness test matters: an absent default_branch would
+      # otherwise read as "not the default branch" and commit straight to it.
       - name: Commit to the current branch on drift
-        if: steps.target.outputs.commit-in-place == 'true'
+        if: >-
+          ${{ github.event.repository.default_branch
+          && github.ref_name != github.event.repository.default_branch }}
         run: |
           if [ -z "$(git status --porcelain)" ]; then
             echo "Conventions already up to date on $GITHUB_REF_NAME."
@@ -82,7 +75,7 @@ jobs:
           git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
 
       - name: Open pull request on drift
-        if: steps.target.outputs.commit-in-place == 'false'
+        if: github.ref_name == github.event.repository.default_branch
         uses: peter-evans/create-pull-request@v7
         with:
           branch: chore/sync-convention-docs

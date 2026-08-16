@@ -18,6 +18,8 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 
 Each consuming repo commits a **copy** of these files under its own `conventions/`, kept current by a scheduled GitHub Action that opens a pull request whenever this repo changes.
 
+Where a sync lands depends on the branch it runs from. On the default branch — every scheduled run, and a manual run left on `main` — it opens a pull request. Dispatch it manually from any other branch and it commits straight to that branch instead, so work already in flight can pull in the current conventions without a second pull request to merge.
+
 A repo syncs only the files it needs — the workflow names them explicitly, so a TypeScript project with no React syncs `typescript.md` and `all.md` and skips the rest. Because of that, a file here may reference the ones it builds on, but never the ones that build on it: `react.md` may point at `typescript.md`, while `typescript.md` names no framework file, since it cannot know which of them a given repo has.
 
 The files are copied rather than referenced because agent instruction files are read at session start, before any dependency is installed — a remote or web session clones the repo and begins immediately, so anything not committed is simply absent. Committing them also means convention changes show up in pull request diffs instead of appearing silently.
@@ -88,7 +90,8 @@ pnpm check      # pnpm check:fix to apply
 
 - **Permissions stay in the caller.** A called workflow cannot widen its own permissions, so `contents: write` and `pull-requests: write` have to be declared by each consumer.
 - **Triggers stay in the caller** too, so cron frequency is a per-repo choice.
-- `peter-evans/create-pull-request` force-pushes its branch on every run, so don't stack manual commits on an open sync PR — the next run discards them.
+- `peter-evans/create-pull-request` force-pushes its branch on every run, so don't stack manual commits on an open sync PR — the next run discards them. This only applies to the pull request path; a dispatch from a non-default branch commits to that branch and force-pushes nothing.
+- **The default branch is read from the event payload**, not hardcoded, so a repo whose default is not `main` behaves the same. The run fails rather than guessing if the payload has no `default_branch`.
 - Scheduled workflows are disabled after 60 days of repository inactivity; `workflow_dispatch` is the manual recovery.
 
 ## Consuming repos

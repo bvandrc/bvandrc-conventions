@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
 
     concurrency:
-      group: sync-conventions-${{ github.repository }}
+      group: sync-conventions-${{ github.repository }}-${{ github.ref }}
       cancel-in-progress: true
 
     steps:
@@ -54,7 +54,37 @@ jobs:
           # Drop the source checkout so it is not swept into the commit.
           rm -rf "$SRC_DIR"
 
+      # A run on the default branch has nowhere safe to commit, so it proposes
+      # the sync as a pull request. A manual run on any other branch is someone
+      # pulling conventions into work already in progress, so it commits there.
+      - name: Decide where the sync lands
+        id: target
+        env:
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          # Empty would silently mean "not the default branch", and push to it.
+          test -n "$DEFAULT_BRANCH"
+          if [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ]; then
+            echo 'commit-in-place=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'commit-in-place=true' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit to the current branch on drift
+        if: steps.target.outputs.commit-in-place == 'true'
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then
+            echo "Conventions already up to date on $GITHUB_REF_NAME."
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A -- "$DEST_DIR"
+          git commit -m "$SYNC_MESSAGE"
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
+
       - name: Open pull request on drift
+        if: steps.target.outputs.commit-in-place == 'false'
         uses: peter-evans/create-pull-request@v7
         with:
           branch: chore/sync-convention-docs

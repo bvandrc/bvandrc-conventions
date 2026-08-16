@@ -92,15 +92,23 @@ Then, in the consuming repo:
 It is distributed by copy rather than as an npm package to match the way
 convention `.md` files are synced.
 
-**What belongs where.** The base holds formatter style — including
-`indentWidth` and `lineWidth`, stated explicitly so they survive a change to
-Biome's defaults — and the rules it raises from warning to error, including
-`style/useImportType` for the `import type` rule in `typescript.md`.
+**What belongs where.**
 
-The repo's own `biome.json` holds everything the shared file cannot know:
-`files.includes`, test-file `overrides`, and framework rules. Note that
-`useFilenamingConvention` and `noDefaultExport` are not included, as these may
-vary per repo, despite the verbiage in our conventions files.
+- **The base** holds:
+  - Formatter style, including `indentWidth` and `lineWidth`, stated
+    explicitly so they survive a change to Biome's defaults.
+  - The rules it raises from warning to error, including `style/useImportType`
+    for the `import type` rule in `typescript.md`.
+- **The repo's own `biome.json`** holds everything the shared file cannot
+  know: `files.includes`, test-file `overrides`, and framework rules.
+
+The base deliberately stops short of enforcing every rule the conventions
+state, as the specifics may vary per repo. `noDefaultExport` is absent
+entirely, and `useFilenamingConvention` runs at Biome's defaults — which
+accept camelCase, kebab-case, snake_case, or a name matching an export — so it
+permits both a kebab-case util and a PascalCase component without requiring
+either where `typescript.md` and `react.md` ask for them. A repo that wants
+the stricter rules configures them itself.
 
 **Validating it here.**
 

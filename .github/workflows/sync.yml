@@ -64,11 +64,9 @@ jobs:
         run: |
           # Empty would silently mean "not the default branch", and push to it.
           test -n "$DEFAULT_BRANCH"
-          if [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ]; then
-            echo 'commit-in-place=false' >> "$GITHUB_OUTPUT"
-          else
-            echo 'commit-in-place=true' >> "$GITHUB_OUTPUT"
-          fi
+          # Assignments both succeed, so the || arm can't swallow a real failure.
+          [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ] && in_place=false || in_place=true
+          echo "commit-in-place=$in_place" >> "$GITHUB_OUTPUT"
 
       - name: Commit to the current branch on drift
         if: steps.target.outputs.commit-in-place == 'true'

@@ -58,6 +58,19 @@ Then, in the consuming repo:
 3. Enable **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**. It is off by default, and without it the run fails with `GitHub Actions is not permitted to create or approve pull requests` *after* pushing the branch — so the sync looks half-done.
 4. Run it once via **workflow_dispatch** to seed `conventions/`.
 
+For a repo syncing all four markdown files, the `CLAUDE.md` import looks like this:
+
+```markdown
+## Code conventions
+
+Conventions live outside this file, synced from https://github.com/bvandrc/bvandrc-conventions — follow all of them:
+
+- @conventions/typescript.md — language-level TypeScript/JavaScript rules
+- @conventions/react.md — component, JSX, and accessibility rules
+- @conventions/playwright.md — test layout, test IDs, and accessibility scans
+- @conventions/all.md — practice for every repo: branches, formatting, markdown, PR reviews
+```
+
 ## Biome config
 
 `biome.base.json` rides the same sync as the markdown: it lands in `conventions/` like everything else, and the repo's `biome.json` extends it.

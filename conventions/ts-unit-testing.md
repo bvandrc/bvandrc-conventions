@@ -1,4 +1,4 @@
-# Unit testing conventions
+# TypeScript unit testing conventions
 
 Builds on the language-level rules in `./typescript.md` — follow those too.
 

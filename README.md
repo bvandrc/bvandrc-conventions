@@ -9,10 +9,11 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, and accessibility rules |
 | [`conventions/playwright.md`](conventions/playwright.md) | Test layout, test IDs, accessibility scans |
+| [`conventions/unit-testing.md`](conventions/unit-testing.md) | Unit test layout, naming, fixtures, assertions |
 | [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, pull request reviews |
 | [`conventions/biome.base.json`](conventions/biome.base.json) | Shared Biome lint and format settings |
 
-`react.md` and `playwright.md` both build on `typescript.md`. `all.md` stands alone and applies to every repo, whatever the stack. `biome.base.json` is the executable half of `typescript.md` — sync the two together.
+`react.md`, `playwright.md` and `unit-testing.md` all build on `typescript.md`. `all.md` stands alone and applies to every repo, whatever the stack. `biome.base.json` is the executable half of `typescript.md` — sync the two together.
 
 ## How consuming repos use these
 
@@ -48,7 +49,7 @@ jobs:
   sync:
     uses: bvandrc/bvandrc-conventions/.github/workflows/sync.yml@main
     with:
-      files: typescript.md react.md playwright.md all.md biome.base.json
+      files: typescript.md react.md playwright.md unit-testing.md all.md biome.base.json
 ```
 
 Then, in the consuming repo:
@@ -58,7 +59,7 @@ Then, in the consuming repo:
 3. Enable **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**. It is off by default, and without it the run fails with `GitHub Actions is not permitted to create or approve pull requests` *after* pushing the branch — so the sync looks half-done.
 4. Run it once via **workflow_dispatch** to seed `conventions/`.
 
-For a repo syncing all four markdown files, the `CLAUDE.md` import looks like this:
+For a repo syncing every markdown file, the `CLAUDE.md` import looks like this:
 
 ```markdown
 ## Code conventions
@@ -68,6 +69,7 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - @conventions/typescript.md — language-level TypeScript/JavaScript rules
 - @conventions/react.md — component, JSX, and accessibility rules
 - @conventions/playwright.md — test layout, test IDs, and accessibility scans
+- @conventions/unit-testing.md — unit test layout, naming, fixtures, and assertions
 - @conventions/all.md — practice for every repo: branches, formatting, markdown, PR reviews
 ```
 

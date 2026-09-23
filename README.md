@@ -13,7 +13,7 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, comments, and pull request reviews |
 | [`conventions/biome.base.json`](conventions/biome.base.json) | Shared Biome lint and format settings |
 
-`react.md`, `playwright.md` and `unit-testing.md` all build on `typescript.md`. `all.md` stands alone and applies to every repo, whatever the stack. `biome.base.json` is the executable half of `typescript.md` — sync the two together.
+`react.md`, `playwright.md`, and `unit-testing.md` all build on `typescript.md`. `all.md` stands alone and applies to every repo, whatever the stack. `biome.base.json` is the executable half of `typescript.md` — sync the two together.
 
 ## How consuming repos use these
 

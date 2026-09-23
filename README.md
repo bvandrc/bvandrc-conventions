@@ -8,9 +8,9 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | --- | --- |
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, and accessibility rules |
-| [`conventions/playwright.md`](conventions/playwright.md) | Test layout, test IDs, accessibility scans |
-| [`conventions/unit-testing.md`](conventions/unit-testing.md) | Unit test layout, naming, fixtures, assertions |
-| [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, comments, pull request reviews |
+| [`conventions/playwright.md`](conventions/playwright.md) | Test layout, test IDs, and accessibility scans |
+| [`conventions/unit-testing.md`](conventions/unit-testing.md) | Unit test layout, naming, fixtures, and assertions |
+| [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, comments, and pull request reviews |
 | [`conventions/biome.base.json`](conventions/biome.base.json) | Shared Biome lint and format settings |
 
 `react.md`, `playwright.md` and `unit-testing.md` all build on `typescript.md`. `all.md` stands alone and applies to every repo, whatever the stack. `biome.base.json` is the executable half of `typescript.md` — sync the two together.
@@ -70,7 +70,7 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - @conventions/react.md — component, JSX, and accessibility rules
 - @conventions/playwright.md — test layout, test IDs, and accessibility scans
 - @conventions/unit-testing.md — unit test layout, naming, fixtures, and assertions
-- @conventions/all.md — practice for every repo: branches, formatting, comments, markdown, PR reviews
+- @conventions/all.md — practice for every repo: branches, formatting, comments, markdown, and PR reviews
 ```
 
 ## Biome config

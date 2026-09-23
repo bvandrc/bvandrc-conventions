@@ -21,7 +21,7 @@ Applies to every repo, independent of language or framework.
 
 ## Comments
 
-- **Where a comment goes**: A doc comment is for callers — what the thing is, what it gives back, what it costs them — and that holds for any function, internal or exported, not only the ones another module can reach. Anything about *how* it does that, and any note explaining a cast, a workaround, or a library's behaviour, goes in a line comment at the code it describes, where whoever changes that line will see it. A caller reading the signature should not have to scroll past a workaround to find what the function does. One kind of comment is neither: an `@fileoverview`, which is where a module says why it exists at all.
+- **Where a comment goes**: A doc comment (ie, above a function) is for *callers* — what the thing is/does, what it gives back, what it costs them, etc. Any note about *how* it does that, or explaining a cast, a workaround, or a library's behaviour, etc, goes in a line comment *within* the function *at* the code it describes, since it doesn't need to be known to the caller. This goes for any function, internal to a file or exported.
 - **Doc comment shape**: A doc comment that runs to more than one line opens with its summary alone — what the thing is, usually one sentence — then a blank line before any specifics: conditions, defaults, the reason it's built the way it is. Whoever is skimming a hover card or a list of signatures gets the summary on its own and can stop there. A comment that is only a summary, however many lines it wraps to, needs no gap. In JS/TS that blank line is a bare ` *` in the JSDoc; every language has its own spelling of it.
 
 ## Writing

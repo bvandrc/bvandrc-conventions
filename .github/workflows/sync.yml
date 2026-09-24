@@ -154,7 +154,6 @@ jobs:
             - Only change what a specific convention requires. No unrelated refactors or behaviour changes.
             - Never edit files under `conventions/`; they are overwritten on every sync.
             - Run the repo's format and check scripts before committing, and only commit when they pass. Skip the commit if nothing needed changing.
-            - You are on a detached HEAD. Do not create or switch branches.
             - If you committed, push with `git push origin HEAD:refs/heads/${{ env.SYNC_BRANCH }}`. Never force-push.
 
       # Claude reports its own push only in the run log, so fail the job if

@@ -3,7 +3,8 @@ name: Sync Conventions
 # Reusable workflow. Consuming repos call this rather than copying the sync
 # steps, so a fix here reaches every project on the next run. Callers own the
 # triggers and must grant contents/pull-requests write — a called workflow
-# cannot widen its own permissions.
+# cannot widen its own permissions. Opting into apply-with-claude also needs
+# id-token write, `secrets: inherit`, and the Claude GitHub App; see the README.
 on:
   workflow_call:
     inputs:
@@ -14,17 +15,36 @@ on:
           in this repo; a missing name fails the run.
         required: true
         type: string
+      apply-with-claude:
+        description: >-
+          After opening or updating the sync pull request, have Claude bring
+          the repo into line with the conventions and push to the same branch.
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      ANTHROPIC_API_KEY:
+        required: false
+      CLAUDE_CODE_OAUTH_TOKEN:
+        required: false
 
 env:
   CONVENTIONS_REPO: bvandrc/bvandrc-conventions
   SYNC_MESSAGE: 'chore: sync convention docs from bvandrc-conventions'
   SRC_DIR: .conventions-src
   DEST_DIR: conventions
+  SYNC_BRANCH: chore/sync-convention-docs
+  SUMMARY_FILE: .claude-apply-summary.md
 
 jobs:
   sync:
     name: Sync conventions
     runs-on: ubuntu-latest
+
+    outputs:
+      pr-number: ${{ steps.pr.outputs.pull-request-number }}
+      pr-operation: ${{ steps.pr.outputs.pull-request-operation }}
+      pr-head-sha: ${{ steps.pr.outputs.pull-request-head-sha }}
 
     concurrency:
       group: sync-conventions-${{ github.repository }}-${{ github.ref }}
@@ -75,10 +95,11 @@ jobs:
           git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
 
       - name: Open pull request on drift
+        id: pr
         if: github.ref_name == github.event.repository.default_branch
         uses: peter-evans/create-pull-request@v7
         with:
-          branch: chore/sync-convention-docs
+          branch: ${{ env.SYNC_BRANCH }}
           delete-branch: true
           commit-message: ${{ env.SYNC_MESSAGE }}
           title: ${{ env.SYNC_MESSAGE }}
@@ -87,3 +108,104 @@ jobs:
 
             Edit conventions upstream — this directory is overwritten on every
             sync, so changes made here are lost.
+
+  apply:
+    name: Apply conventions with Claude
+    needs: sync
+    # Only on the pull request path, and only when the sync changed something.
+    if: >-
+      inputs.apply-with-claude
+      && contains(fromJSON('["created", "updated"]'), needs.sync.outputs.pr-operation)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    # No `permissions:` here on purpose: asking for id-token write would fail
+    # validation for every caller that hasn't granted it, opted in or not. The
+    # job inherits the caller's grant; the action exchanges id-token for a
+    # Claude GitHub App token.
+
+    steps:
+      # Checked out at the sync commit itself, so if a newer sync moves the
+      # branch mid-run, Claude's push is rejected instead of overwriting it.
+      - name: Checkout sync branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.sync.outputs.pr-head-sha }}
+          fetch-depth: 0
+
+      # Claude needs the repo's own format and check scripts to verify its
+      # changes, so install dependencies the way the repo's CI does.
+      - name: Setup (repo's own action)
+        if: hashFiles('.github/actions/setup/action.yml') != ''
+        uses: ./.github/actions/setup
+
+      - name: Setup pnpm
+        if: hashFiles('.github/actions/setup/action.yml') == '' && hashFiles('pnpm-lock.yaml') != ''
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        if: hashFiles('.github/actions/setup/action.yml') == '' && hashFiles('pnpm-lock.yaml') != ''
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        if: hashFiles('.github/actions/setup/action.yml') == '' && hashFiles('pnpm-lock.yaml') != ''
+        run: pnpm install --frozen-lockfile
+
+      - name: Keep the summary out of commits
+        run: echo "$SUMMARY_FILE" >> .git/info/exclude
+
+      # Claude pushes from inside the action because its app token is revoked
+      # when the action ends. A push with that token, unlike the sync's
+      # GITHUB_TOKEN push, starts CI on the pull request.
+      - name: Apply conventions with Claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: >-
+            --max-turns 80
+            --permission-mode acceptEdits
+            --allowedTools "Read,Glob,Grep,Edit,MultiEdit,Write,Bash(git add:*),Bash(git commit:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git push:*),Bash(pnpm:*),Bash(npm run:*)"
+          prompt: |
+            You are working on pull request #${{ needs.sync.outputs.pr-number }} in ${{ github.repository }}. It syncs updated convention files into `conventions/` from https://github.com/${{ env.CONVENTIONS_REPO }}. The repo's CLAUDE.md imports those conventions, and says how to format and check the code.
+
+            1. Run `git diff origin/${{ github.event.repository.default_branch }} -- conventions/` to see which rules are new or changed. Bring the repo into line with them. Commit as `refactor: apply updated conventions`.
+            2. Review the rest of the repo against all the conventions in `conventions/`, and fix any other violations. Commit separately as `refactor: fix existing convention drift`.
+
+            Rules:
+            - Only change what a specific convention requires. No unrelated refactors or behaviour changes.
+            - Never edit files under `conventions/`; they are overwritten on every sync.
+            - Run the repo's format and check scripts before each commit, and only commit when they pass. Skip a commit if its step found nothing to change.
+            - You are on a detached HEAD. Do not create or switch branches.
+            - If you made any commits, push them with `git push origin HEAD:refs/heads/${{ env.SYNC_BRANCH }}`. Never force-push.
+
+            Finally, write a summary to `${{ env.SUMMARY_FILE }}` in the repo root (it is git-ignored; do not commit it). List each change under the rule it applies, split into "Updated conventions" and "Existing drift". Then list anything you chose to leave, and why. If nothing needed changing, say so.
+
+      - name: Comment on the pull request
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ needs.sync.outputs.pr-number }}
+          SYNC_SHA: ${{ needs.sync.outputs.pr-head-sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          remote=$(gh api "repos/$GITHUB_REPOSITORY/branches/$SYNC_BRANCH" --jq .commit.sha || true)
+          {
+            echo "## Conventions applied by Claude"
+            echo
+            if [ -s "$SUMMARY_FILE" ]; then
+              cat "$SUMMARY_FILE"
+            else
+              echo "Claude finished without writing a summary. See the [workflow run]($RUN_URL)."
+            fi
+            # Flag commits Claude made but did not get onto the branch.
+            if [ "$(git rev-list --count "$SYNC_SHA..HEAD")" != 0 ] && [ "$remote" != "$(git rev-parse HEAD)" ]; then
+              echo
+              echo "> [!WARNING]"
+              echo "> Claude's commits did not reach \`$SYNC_BRANCH\`. See the [workflow run]($RUN_URL)."
+            fi
+          } > "$RUNNER_TEMP/comment.md"
+          gh pr comment "$NUMBER" --body-file "$RUNNER_TEMP/comment.md"

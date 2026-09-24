@@ -21,6 +21,7 @@ Applies to every repo, independent of language or framework.
   - Nest by component.
   - Build strings with the registry's own helper — never a hand-written `[data-testid="..."]`.
   - Name a container's own testid `SELF`.
+  - An odd or complicated selector that only one test will ever need can stay in that test. The registry is for what more than one place reaches for; an entry written once and read once only puts the selector further from the assertion depending on it.
 - **Testing internals**: Never widen a module's API for a test. Where something is only public so a test file can reach it, keep it internal and drive it through the public thing that uses it — the test then pins behaviour someone can actually depend on, and survives the internal being renamed or absorbed. A repo's test-support module is the exception: being imported by tests is its whole job.
 - **Checking a new test can fail**: A test that passes against broken source pins nothing. Before keeping a new case, break the behaviour it names and confirm that case — and ideally only that case — goes red.
 

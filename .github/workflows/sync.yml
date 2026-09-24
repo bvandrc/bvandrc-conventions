@@ -34,7 +34,6 @@ env:
   SRC_DIR: .conventions-src
   DEST_DIR: conventions
   SYNC_BRANCH: chore/sync-convention-docs
-  SUMMARY_FILE: .claude-apply-summary.md
 
 jobs:
   sync:
@@ -132,9 +131,6 @@ jobs:
           ref: ${{ needs.sync.outputs.pr-head-sha }}
           fetch-depth: 0
 
-      - name: Keep the summary out of commits
-        run: echo "$SUMMARY_FILE" >> .git/info/exclude
-
       # Claude pushes from inside the action because its app token is revoked
       # when the action ends. A push with that token, unlike the sync's
       # GITHUB_TOKEN push, starts CI on the pull request.
@@ -161,31 +157,19 @@ jobs:
             - You are on a detached HEAD. Do not create or switch branches.
             - If you committed, push with `git push origin HEAD:refs/heads/${{ env.SYNC_BRANCH }}`. Never force-push.
 
-            Finally, write a summary to `${{ env.SUMMARY_FILE }}` in the repo root (it is git-ignored; do not commit it). List each change under the rule it applies, grouping the rules into "Updated conventions" (added or changed by this sync) and "Existing drift". Then list anything you chose to leave, and why. If nothing needed changing, say so.
-
-      - name: Comment on the pull request
-        if: always()
+      # Claude reports its own push only in the run log, so fail the job if
+      # it committed without landing those commits on the branch.
+      - name: Check Claude's commits reached the branch
         env:
           GH_TOKEN: ${{ github.token }}
-          GH_REPO: ${{ github.repository }}
-          NUMBER: ${{ needs.sync.outputs.pr-number }}
           SYNC_SHA: ${{ needs.sync.outputs.pr-head-sha }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
         run: |
-          remote=$(gh api "repos/$GITHUB_REPOSITORY/branches/$SYNC_BRANCH" --jq .commit.sha || true)
-          {
-            echo "## Conventions applied by Claude"
-            echo
-            if [ -s "$SUMMARY_FILE" ]; then
-              cat "$SUMMARY_FILE"
-            else
-              echo "Claude finished without writing a summary. See the [workflow run]($RUN_URL)."
-            fi
-            # Flag commits Claude made but did not get onto the branch.
-            if [ "$(git rev-list --count "$SYNC_SHA..HEAD")" != 0 ] && [ "$remote" != "$(git rev-parse HEAD)" ]; then
-              echo
-              echo "> [!WARNING]"
-              echo "> Claude's commits did not reach \`$SYNC_BRANCH\`. See the [workflow run]($RUN_URL)."
-            fi
-          } > "$RUNNER_TEMP/comment.md"
-          gh pr comment "$NUMBER" --body-file "$RUNNER_TEMP/comment.md"
+          if [ "$(git rev-list --count "$SYNC_SHA..HEAD")" = 0 ]; then
+            echo "Claude made no commits."
+            exit 0
+          fi
+          remote=$(gh api "repos/$GITHUB_REPOSITORY/branches/$SYNC_BRANCH" --jq .commit.sha)
+          if [ "$remote" != "$(git rev-parse HEAD)" ]; then
+            echo "::error::Claude's commits did not reach $SYNC_BRANCH."
+            exit 1
+          fi

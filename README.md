@@ -119,7 +119,7 @@ A sync PR only copies the rules. With `apply-with-claude: true`, a second job th
 
 1. Checks out the sync commit. Claude installs dependencies itself, following the repo's CLAUDE.md, README, or CI workflows, so the repo needs no particular setup files.
 2. Runs Claude, which checks the code against every convention in one pass, both the rules the sync added or changed and older rules the code has drifted from. It commits the fixes as one `refactor: apply conventions`, after the repo's format and check scripts pass, and pushes to the PR branch.
-3. Comments on the PR with Claude's summary of what changed under which rule, and what it left alone.
+3. Fails the job if Claude committed but its commits didn't reach the PR branch.
 
 ### Setup, per consuming repo
 

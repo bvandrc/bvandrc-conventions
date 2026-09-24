@@ -17,7 +17,7 @@ Applies to every repo, independent of language or framework.
 ## Testing
 
 - **Unit vs end-to-end**: Where a repo has both, a pure function's edge cases belong in its unit test rather than an end-to-end run — especially ones that would need a large setup to reach through the UI. End-to-end keeps the wiring: that the UI calls the function and renders what it returns. A case whose return value changes what the user actually sees, in a way worth pinning down, still earns an end-to-end test of its own.
-- **Test ID registry**: Where tests reach a UI by test id, every `data-testid` value is defined in one registry before it is used, and every suite imports that same one — `shared/test-support/selectors.ts` where the repo has both unit and end-to-end tests, `playwright/support/constants/selectors.ts` (or the equivalent under the end-to-end folder) where end-to-end is the only suite. A second registry is a second name for one element, and the copy the failing suite doesn't read is the one that drifts.
+- **Test ID registry**: Where tests reach a UI by test id, every `data-testid` value is defined in one registry before it is used, and every suite imports that same one — e.g. `shared/test-support/selectors.ts` for a TypeScript repo that has both unit and end-to-end tests, `playwright/support/constants/selectors.ts` for a TypeScript Playwright repo where end-to-end is the only suite. A second registry is a second name for one element, and the copy the failing suite doesn't read is the one that drifts.
   - Nest by component.
   - Build strings with the registry's own helper — never a hand-written `[data-testid="..."]`.
   - Name a container's own testid `SELF`.

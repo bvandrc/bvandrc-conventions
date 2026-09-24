@@ -132,13 +132,6 @@ jobs:
           ref: ${{ needs.sync.outputs.pr-head-sha }}
           fetch-depth: 0
 
-      # Claude needs the repo's own format and check scripts to verify its
-      # changes. A repo with a setup action gets its CI's cached install;
-      # otherwise Claude installs dependencies itself, from the repo's docs.
-      - name: Setup (repo's own action)
-        if: hashFiles('.github/actions/setup/action.yml') != ''
-        uses: ./.github/actions/setup
-
       - name: Keep the summary out of commits
         run: echo "$SUMMARY_FILE" >> .git/info/exclude
 
@@ -157,7 +150,7 @@ jobs:
           prompt: |
             You are working on pull request #${{ needs.sync.outputs.pr-number }} in ${{ github.repository }}. It syncs updated convention files into `conventions/` from https://github.com/${{ env.CONVENTIONS_REPO }}. The repo's CLAUDE.md imports those conventions, and says how to format and check the code.
 
-            0. If the repo's dependencies aren't installed yet, install them the way its CLAUDE.md, README, or CI workflows describe. Node and Yarn are preinstalled; if pnpm isn't on the PATH, run it as `corepack pnpm`.
+            0. Install the repo's dependencies the way its CLAUDE.md, README, or CI workflows describe, so its format and check scripts run. Node and Yarn are preinstalled; if pnpm isn't on the PATH, run it as `corepack pnpm`.
             1. Run `git diff origin/${{ github.event.repository.default_branch }} -- conventions/` to see which rules are new or changed. Bring the repo into line with them. Commit as `refactor: apply updated conventions`.
             2. Review the rest of the repo against all the conventions in `conventions/`, and fix any other violations. Commit separately as `refactor: fix existing convention drift`.
 

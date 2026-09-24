@@ -117,7 +117,7 @@ pnpm check      # pnpm check:fix to apply
 
 A sync PR only copies the rules. With `apply-with-claude: true`, a second job then has Claude bring the code into line with them, on the same pull request. It runs whenever the sync opens or updates the PR:
 
-1. Checks out the sync commit and installs dependencies through the repo's `.github/actions/setup` if it has one. Otherwise Claude installs them itself, following the repo's CLAUDE.md, README, or CI workflows.
+1. Checks out the sync commit. Claude installs dependencies itself, following the repo's CLAUDE.md, README, or CI workflows, so the repo needs no particular setup files.
 2. Runs Claude, which commits `refactor: apply updated conventions` for the new or changed rules, then `refactor: fix existing convention drift` for anything else out of line, running the repo's format and check scripts before each, and pushes to the PR branch.
 3. Comments on the PR with Claude's summary of what changed under which rule, and what it left alone.
 
@@ -134,7 +134,7 @@ The key is stored in each repo rather than once here on purpose. Running Claude 
 - **The job inherits the caller's permissions.** It declares none itself, because asking for `id-token: write` would fail validation for callers that haven't granted it, whether they opted in or not.
 - **CI runs on the PR once Claude pushes.** The sync's own push uses `GITHUB_TOKEN`, which starts no workflows; a push with the app's token does. If Claude finds nothing to change, CI doesn't run on the sync PR.
 - **A newer sync discards Claude's commits** along with the rest of the branch, then Claude runs again against the new sync commit.
-- **Claude's shell is limited to JavaScript tooling.** Besides file edits and a handful of `git` commands, it may run only `corepack`, `npm`, `npx`, `pnpm`, and `yarn`. A repo on another stack needs a `.github/actions/setup` for its dependencies.
+- **Claude's shell is limited to JavaScript tooling.** Besides file edits and a handful of `git` commands, it may run only `corepack`, `npm`, `npx`, `pnpm`, and `yarn`. A repo on another stack needs its package manager added to the job's `--allowedTools` before Claude can install its dependencies.
 - **Only the pull request path runs Claude.** A dispatch from a non-default branch commits the sync to that branch and stops there.
 
 ## Consuming repos

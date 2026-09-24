@@ -151,7 +151,7 @@ jobs:
             You are working on pull request #${{ needs.sync.outputs.pr-number }} in ${{ github.repository }}. It syncs updated convention files into `conventions/` from https://github.com/${{ env.CONVENTIONS_REPO }}. The repo's CLAUDE.md imports those conventions, and says how to format and check the code.
 
             0. Install the repo's dependencies the way its CLAUDE.md, README, or CI workflows describe, so its format and check scripts run.
-            1. Run `git diff origin/${{ github.event.repository.default_branch }} -- conventions/` to see which rules are new or changed. Bring the repo into line with them. Commit as `refactor: apply updated conventions`.
+            1. The convention files themselves are already updated; the code isn't yet. Run `git diff origin/${{ github.event.repository.default_branch }} -- conventions/` to see which rules this sync added or changed, then update the code outside `conventions/` to follow them. Commit as `refactor: apply updated conventions`.
             2. Review the rest of the repo against all the conventions in `conventions/`, and fix any other violations. Commit separately as `refactor: fix existing convention drift`.
 
             Rules:

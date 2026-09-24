@@ -18,6 +18,7 @@ Applies to every repo, independent of language or framework.
 
 - **Unit vs end-to-end**: Where a repo has both, a pure function's edge cases belong in its unit test rather than an end-to-end run — especially ones that would need a large setup to reach through the UI. End-to-end keeps the wiring: that the UI calls the function and renders what it returns. A case whose return value changes what the user actually sees, in a way worth pinning down, still earns an end-to-end test of its own.
 - **Testing internals**: Never widen a module's API for a test. Where something is only public so a test file can reach it, keep it internal and drive it through the public thing that uses it — the test then pins behaviour someone can actually depend on, and survives the internal being renamed or absorbed. A repo's test-support module is the exception: being imported by tests is its whole job.
+- **Checking a new test can fail**: A test that passes against broken source pins nothing. Before keeping a new case, break the behaviour it names and confirm that case — and ideally only that case — goes red.
 
 ## Comments
 

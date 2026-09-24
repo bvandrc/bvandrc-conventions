@@ -151,17 +151,17 @@ jobs:
             You are working on pull request #${{ needs.sync.outputs.pr-number }} in ${{ github.repository }}. It syncs updated convention files into `conventions/` from https://github.com/${{ env.CONVENTIONS_REPO }}. The repo's CLAUDE.md imports those conventions, and says how to format and check the code.
 
             0. Install the repo's dependencies the way its CLAUDE.md, README, or CI workflows describe, so its format and check scripts run.
-            1. The convention files themselves are already updated; the code isn't yet. Run `git diff origin/${{ github.event.repository.default_branch }} -- conventions/` to see which rules this sync added or changed, then update the code outside `conventions/` to follow them. Commit as `refactor: apply updated conventions`.
-            2. Review the rest of the repo against all the conventions in `conventions/`, and fix any other violations. Commit separately as `refactor: fix existing convention drift`.
+            1. The convention files themselves are already updated; the code isn't yet. Run `git diff origin/${{ github.event.repository.default_branch }} -- conventions/` to see which rules this sync added or changed.
+            2. In a single pass over the code outside `conventions/`, fix every violation of the conventions in `conventions/`: those rules this sync added or changed, and any older rule the code has drifted from. Commit as `refactor: apply conventions`.
 
             Rules:
             - Only change what a specific convention requires. No unrelated refactors or behaviour changes.
             - Never edit files under `conventions/`; they are overwritten on every sync.
-            - Run the repo's format and check scripts before each commit, and only commit when they pass. Skip a commit if its step found nothing to change.
+            - Run the repo's format and check scripts before committing, and only commit when they pass. Skip the commit if nothing needed changing.
             - You are on a detached HEAD. Do not create or switch branches.
-            - If you made any commits, push them with `git push origin HEAD:refs/heads/${{ env.SYNC_BRANCH }}`. Never force-push.
+            - If you committed, push with `git push origin HEAD:refs/heads/${{ env.SYNC_BRANCH }}`. Never force-push.
 
-            Finally, write a summary to `${{ env.SUMMARY_FILE }}` in the repo root (it is git-ignored; do not commit it). List each change under the rule it applies, split into "Updated conventions" and "Existing drift". Then list anything you chose to leave, and why. If nothing needed changing, say so.
+            Finally, write a summary to `${{ env.SUMMARY_FILE }}` in the repo root (it is git-ignored; do not commit it). List each change under the rule it applies, grouping the rules into "Updated conventions" (added or changed by this sync) and "Existing drift". Then list anything you chose to leave, and why. If nothing needed changing, say so.
 
       - name: Comment on the pull request
         if: always()

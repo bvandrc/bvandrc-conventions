@@ -118,7 +118,7 @@ pnpm check      # pnpm check:fix to apply
 A sync PR only copies the rules. With `apply-with-claude: true`, a second job then has Claude bring the code into line with them, on the same pull request. It runs whenever the sync opens or updates the PR:
 
 1. Checks out the sync commit. Claude installs dependencies itself, following the repo's CLAUDE.md, README, or CI workflows, so the repo needs no particular setup files.
-2. Runs Claude, which commits `refactor: apply updated conventions` for the new or changed rules, then `refactor: fix existing convention drift` for anything else out of line, running the repo's format and check scripts before each, and pushes to the PR branch.
+2. Runs Claude, which checks the code against every convention in one pass, both the rules the sync added or changed and older rules the code has drifted from. It commits the fixes as one `refactor: apply conventions`, after the repo's format and check scripts pass, and pushes to the PR branch.
 3. Comments on the PR with Claude's summary of what changed under which rule, and what it left alone.
 
 ### Setup, per consuming repo

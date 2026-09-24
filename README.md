@@ -44,12 +44,15 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  id-token: write # For apply-with-claude
 
 jobs:
   sync:
     uses: bvandrc/bvandrc-conventions/.github/workflows/sync.yml@main
     with:
       files: typescript.md react.md playwright.md ts-unit-testing.md all.md biome.base.json
+      apply-with-claude: true
+    secrets: inherit
 ```
 
 Then, in the consuming repo:
@@ -57,7 +60,8 @@ Then, in the consuming repo:
 1. Set `files` to the subset that repo needs. A backend TypeScript project might use `typescript.md all.md`.
 2. Import the same files from its `CLAUDE.md`, one `@conventions/<file>` per line. The `files` input decides what exists on disk; the imports decide what Claude loads, and the two should match.
 3. Enable **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**. It is off by default, and without it the run fails with `GitHub Actions is not permitted to create or approve pull requests` *after* pushing the branch — so the sync looks half-done.
-4. Run it once via **workflow_dispatch** to seed `conventions/`.
+4. Set up [Claude](#applying-conventions-with-claude), or drop `apply-with-claude`, `id-token`, and `secrets` from the file above to only sync.
+5. Run it once via **workflow_dispatch** to seed `conventions/`.
 
 For a repo syncing every markdown file, the `CLAUDE.md` import looks like this:
 
@@ -108,6 +112,26 @@ pnpm check      # pnpm check:fix to apply
 - `peter-evans/create-pull-request` force-pushes its branch on every run, so don't stack manual commits on an open sync PR — the next run discards them. This only applies to the pull request path; a dispatch from a non-default branch commits to that branch and force-pushes nothing.
 - **The default branch is read from the event payload**, not hardcoded, so a repo whose default is not `main` behaves the same. The run fails rather than guessing if the payload has no `default_branch`.
 - Scheduled workflows are disabled after 60 days of repository inactivity; `workflow_dispatch` is the manual recovery.
+
+## Applying conventions with Claude
+
+A sync PR only copies the rules. With `apply-with-claude: true`, a second job then has Claude bring the code into line with them, on the same pull request, whenever the sync opens or updates the PR. Claude installs the repo's dependencies from its own CLAUDE.md, README, or CI workflows, then fixes the code against every convention in one pass — the rules the sync added or changed, and older ones the code has drifted from — and pushes a single `refactor: apply conventions` commit once the repo's format and check scripts pass.
+
+### Setup, per consuming repo
+
+1. Install the [Claude GitHub App](https://github.com/apps/claude) on the repo. Installing it for all repositories on the account covers new repos too. Claude pushes with the app's token, which is scoped to the one repo the run is in.
+2. Add a repository secret under **Settings → Secrets and variables → Actions**: `ANTHROPIC_API_KEY` from console.anthropic.com, or `CLAUDE_CODE_OAUTH_TOKEN` from `claude setup-token` to bill a Pro/Max subscription.
+3. In `sync-conventions.yml`, grant `id-token: write`, set `apply-with-claude: true`, and add `secrets: inherit`, as in the example above.
+
+The key is stored in each repo rather than once here on purpose. Running Claude centrally would need a token here that can push to every consuming repo; per-repo, each run can only touch its own repo.
+
+### Notes
+
+- **The job inherits the caller's permissions.** It declares none itself, because asking for `id-token: write` would fail validation for callers that haven't granted it, whether they opted in or not.
+- **CI runs on the PR once Claude pushes.** The sync's own push uses `GITHUB_TOKEN`, which starts no workflows; a push with the app's token does. If Claude finds nothing to change, CI doesn't run on the sync PR.
+- **A newer sync discards Claude's commits** along with the rest of the branch, then Claude runs again against the new sync commit.
+- **Claude's shell is limited to JavaScript tooling.** Besides file edits and a handful of `git` commands, it may run only `corepack`, `npm`, `npx`, `pnpm`, and `yarn`. A repo on another stack needs its package manager added to the job's `--allowedTools` before Claude can install its dependencies.
+- **Only the pull request path runs Claude.** A dispatch from a non-default branch commits the sync to that branch and stops there.
 
 ## Consuming repos
 

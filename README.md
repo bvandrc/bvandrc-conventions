@@ -8,12 +8,13 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | --- | --- |
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, and accessibility rules |
-| [`conventions/playwright.md`](conventions/playwright.md) | Test layout, test IDs, accessibility scans |
-| [`conventions/ts-unit-testing.md`](conventions/ts-unit-testing.md) | TypeScript unit test layout, naming, fixtures, assertions |
+| [`conventions/ts-testing-all.md`](conventions/ts-testing-all.md) | TypeScript testing rules shared by every suite: test IDs, naming, assertions |
+| [`conventions/playwright.md`](conventions/playwright.md) | Playwright-specific: test layout, accessibility scans |
+| [`conventions/ts-unit-testing.md`](conventions/ts-unit-testing.md) | Vitest-specific: unit test layout, fixtures |
 | [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, comments, testing, pull request reviews |
 | [`conventions/biome.base.json`](conventions/biome.base.json) | Shared Biome lint and format settings |
 
-`react.md`, `playwright.md`, and `ts-unit-testing.md` all build on `typescript.md`. `all.md` stands alone and applies to every repo, whatever the stack. `biome.base.json` is the executable half of `typescript.md` — sync the two together.
+`react.md` builds on `typescript.md`. `playwright.md` and `ts-unit-testing.md` each build on both `typescript.md` and `ts-testing-all.md`, which holds the testing rules that don't split by suite. `all.md` stands alone and applies to every repo, whatever the stack. `biome.base.json` is the executable half of `typescript.md` — sync the two together.
 
 ## How consuming repos use these
 
@@ -21,7 +22,15 @@ Each consuming repo commits a **copy** of these files under its own `conventions
 
 Where a sync lands depends on the branch it runs from. On the default branch — every scheduled run, and a manual run left on `main` — it opens a pull request. Dispatch it manually from any other branch and it commits straight to that branch instead, so work already in flight can pull in the current conventions without a second pull request to merge.
 
-A repo syncs only the files it needs — the workflow names them explicitly, so a TypeScript project with no React syncs `typescript.md` and `all.md` and skips the rest. Because of that, a file here may reference the ones it builds on, but never the ones that build on it: `react.md` may point at `typescript.md`, while `typescript.md` names no framework file, since it cannot know which of them a given repo has.
+A repo syncs only the files it needs — the workflow names them explicitly, so a TypeScript project with no React syncs `typescript.md` and `all.md` and skips the rest. Because of that, a file here may reference the ones it builds on, but never the ones that build on it: `react.md` may point at `typescript.md`, while `typescript.md` names no framework file, since it cannot know which of them a given repo has. Concretely, only these are safe to assume from another file's presence:
+
+- Any repo with TypeScript has `typescript.md`.
+- Any repo with React has `react.md` (and so `typescript.md`).
+- Any repo with a TypeScript test suite, of any kind, has `ts-testing-all.md`.
+- Any repo with Playwright has `playwright.md` (and so `ts-testing-all.md`).
+- Any repo with Vitest unit tests has `ts-unit-testing.md` (and so `ts-testing-all.md`).
+
+This governs edits made here, not what a consuming repo's agent needs to know — it can just look at what its own `conventions/` directory actually holds.
 
 The files are copied rather than referenced because agent instruction files are read at session start, before any dependency is installed — a remote or web session clones the repo and begins immediately, so anything not committed is simply absent. Committing them also means convention changes show up in pull request diffs instead of appearing silently.
 
@@ -50,7 +59,7 @@ jobs:
   sync:
     uses: bvandrc/bvandrc-conventions/.github/workflows/sync.yml@main
     with:
-      files: typescript.md react.md playwright.md ts-unit-testing.md all.md biome.base.json
+      files: typescript.md react.md ts-testing-all.md playwright.md ts-unit-testing.md all.md biome.base.json
       apply-with-claude: true
     secrets: inherit
 ```
@@ -72,8 +81,9 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 
 - @conventions/typescript.md — language-level TypeScript/JavaScript rules
 - @conventions/react.md — component, JSX, and accessibility rules
-- @conventions/playwright.md — test layout, test IDs, and accessibility scans
-- @conventions/ts-unit-testing.md — TypeScript unit test layout, naming, fixtures, and assertions
+- @conventions/ts-testing-all.md — testing rules shared by every TypeScript suite: test IDs, naming, assertions
+- @conventions/playwright.md — Playwright-specific: test layout and accessibility scans
+- @conventions/ts-unit-testing.md — Vitest-specific: unit test layout, fixtures
 - @conventions/all.md — practice for every repo: branches, formatting, comments, testing, markdown, PR reviews
 ```
 

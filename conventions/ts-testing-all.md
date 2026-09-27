@@ -2,7 +2,7 @@
 
 Builds on the language-level rules in `./typescript.md` — follow those too. Holds for any TypeScript test suite in the repo, Vitest and Playwright alike.
 
-- **Destructuring from the registry**: See `./all.md`'s Test ID registry rule for the registry itself — this is TypeScript-specific on top of it, since not every language's test suites destructure. A deeply nested registry turns a call site into a long chain — `getByTestId(SELECTORS.SAVE_DIALOG.CONFIRM_DELETE_DIALOG.SUBMIT_BTN)` — that wraps lines and repeats the same prefix down a test file. Pull a leaf out to a local const where doing so doesn't cost the reader the cue that it's a selector rather than some other fixture.
+- **Destructuring from the Selectors registry**: See `./all.md`'s Test ID registry rule for the registry itself — this is TypeScript-specific on top of it, since not every language's test suites destructure. A deeply nested registry turns a call site into a long chain — `getByTestId(SELECTORS.SAVE_DIALOG.CONFIRM_DELETE_DIALOG.SUBMIT_BTN)` — that wraps lines and repeats the same prefix down a test file. Pull a leaf out to a local const where doing so doesn't cost the reader the cue that it's a selector rather than some other fixture.
   - Destructure when either of these holds, and both are fine to lean on together:
     - **The name alone says what it is**, even stripped of its `SELECTORS.X.Y` prefix — `CONFIRM_DELETE_DIALOG`, read inside a suite about that dialog, still reads as a selector on its own.
     - **The scope is narrow enough** that the reader can see the whole cluster is selectors from where it was declared — the top of a file that's entirely about one component, or inside the one `describe`/test block that concerns it.

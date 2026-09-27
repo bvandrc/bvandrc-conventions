@@ -13,7 +13,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   - `create*` (e.g. `createTempFile`, `createUser`) — makes something with side effects on the subject or on a fixture (where a `build*` only hands back a constant, that could, for example be passed to a `create*`)
   - `mock*` (e.g. `mockFetch`, `mockLogger`) — mocks a fixture rather than building one, i.e. where `vi.fn()` or another Vitest mock is what the case needs.
   - `get*`, `query*`, `find*` (e.g. `getRow`, `queryBanner`) — for one wrapping the matching Testing Library call (`screen.getByX`, `screen.queryByX`, `screen.findByX`).
-  - `get*` (e.g. `getUserIds`, reading a list of ids off a list of users) also covers one with no Testing Library call that pulls something out of a fixture or a function's input and hands back something more testable — a deep property, or a transform on the input rather than a plain passthrough.
+  - `get*` (e.g. `getUserIds`, reading a list of ids off a list of users) also covers one with no Testing Library call that pulls something out of the function's input (or out of a fixture in the scope) and returns something for the test — e.g. getting a deep property of the input, transforming the input into something more testable, etc.
   - For one that acts, prefix with the verb itself (`clickRow`, `typeName`, `submitForm`).
   - A helper that wraps one function and returns what it returns takes that function's name (e.g. `parse` for `parseConfig`, `evaluate` for `evaluateFilters`). This matters most where the wrapped thing is what the test block is testing.
   - Adhering to these rules should fulfil all/most cases, but there may be occasional exceptions. However, never use naming:

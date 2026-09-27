@@ -2,18 +2,14 @@
 
 Builds on the language-level rules in `./typescript.md` — follow those too. Holds for any TypeScript test suite in the repo, Vitest and Playwright alike; `./ts-unit-testing.md` and `./playwright.md` each build on this rather than restating it.
 
-- **Test ID registry**: Where tests reach a UI by test id, every `data-testid` value is defined in one registry before it is used, and every suite imports that same one — e.g. `shared/test-support/selectors.ts` for a repo that has both unit and end-to-end tests, `playwright/support/constants/selectors.ts` for one where end-to-end is the only suite. A second registry is a second name for one element, and the copy the failing suite doesn't read is the one that drifts.
-  - Nest by component.
-  - Name a container's own testid `SELF`.
-  - A selector specific to one test — odd or complicated, and not something another test would reach for — can stay in that test. What decides is whether it names something another test could want, not how many use it today: an id that would serve a second test goes in the registry the first time it is written.
-  - **Destructuring from the registry**: A deeply nested registry turns a call site into a long chain — `getByTestId(SELECTORS.SAVE_DIALOG.CONFIRM_DELETE_DIALOG.SUBMIT_BTN)` — that wraps lines and repeats the same prefix down a test file. Pull a leaf out to a local const where doing so doesn't cost the reader the cue that it's a selector rather than some other fixture.
-    - Destructure when either of these holds, and both are fine to lean on together:
-      - **The name alone says what it is**, even stripped of its `SELECTORS.X.Y` prefix — `CONFIRM_DELETE_DIALOG`, read inside a suite about that dialog, still reads as a selector on its own.
-      - **The scope is narrow enough** that the reader can see the whole cluster is selectors from where it was declared — the top of a file that's entirely about one component, or inside the one `describe`/test block that concerns it.
-    - Leave a leaf qualified instead when either of these holds:
-      - Its name is generic enough to go ambiguous once pulled out of its namespace (`SELF`, `DIALOG`).
-      - The destructure would be broad enough to gather unrelated groups at module scope, defeating the same cue a narrow one buys.
-    - This is a judgment call, not a mechanical rule a linter could check — when a destructured name would read as any other test constant, leave it qualified.
+- **Destructuring from the registry**: See `./all.md`'s Test ID registry rule for the registry itself — this is TypeScript-specific on top of it, since not every language's test suites destructure. A deeply nested registry turns a call site into a long chain — `getByTestId(SELECTORS.SAVE_DIALOG.CONFIRM_DELETE_DIALOG.SUBMIT_BTN)` — that wraps lines and repeats the same prefix down a test file. Pull a leaf out to a local const where doing so doesn't cost the reader the cue that it's a selector rather than some other fixture.
+  - Destructure when either of these holds, and both are fine to lean on together:
+    - **The name alone says what it is**, even stripped of its `SELECTORS.X.Y` prefix — `CONFIRM_DELETE_DIALOG`, read inside a suite about that dialog, still reads as a selector on its own.
+    - **The scope is narrow enough** that the reader can see the whole cluster is selectors from where it was declared — the top of a file that's entirely about one component, or inside the one `describe`/test block that concerns it.
+  - Leave a leaf qualified instead when either of these holds:
+    - Its name is generic enough to go ambiguous once pulled out of its namespace (`SELF`, `DIALOG`).
+    - The destructure would be broad enough to gather unrelated groups at module scope, defeating the same cue a narrow one buys.
+  - This is a judgment call, not a mechanical rule a linter could check — when a destructured name would read as any other test constant, leave it qualified.
 - **Naming a test's values**: A fixture is UPPER_CASE — data a fixture builder produced or a literal the case pins as fixed reference data. camelCase is for everything that isn't a fixture — what the module under test handed back, what *constructs* the subject rather than feeding it, and a local inside a fixture helper's own body. Coming back from a function is not what earns the caps — reading it that way would shout every line and spend the one distinction the casing carries.
 - **Naming a test's helpers**: A helper declared inside a test file is named for what it _does_ rather than for what it _returns_ — verb first, prefixed by which kind of helper it is (see below). The main point of this is that a reader can tell the test's own scaffolding apart from the source functions a test file imports, which may not always be only the one under test: cases may often call a neighboring export to set something up, process a result, etc.
   - `render*` (e.g. `renderDialog`, `renderWithRouter`) — renders the subject. Vitest/Testing-Library only: a Playwright spec drives a real page instead, so it has no rendering step to name this way.

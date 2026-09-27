@@ -64,7 +64,7 @@ jobs:
   sync:
     uses: bvandrc/bvandrc-conventions/.github/workflows/sync.yml@main
     with:
-      files: typescript.md react.md ts-testing-all.md playwright.md ts-unit-testing.md all.md biome.base.json
+      files: all.md typescript.md react.md ts-testing-all.md playwright.md ts-unit-testing.md biome.base.json
       apply-with-claude: true
     secrets: inherit
 ```
@@ -84,12 +84,12 @@ For a repo syncing every markdown file, the `CLAUDE.md` import looks like this:
 
 Conventions live outside this file, synced from https://github.com/bvandrc/bvandrc-conventions — follow all of them:
 
+- @conventions/all.md — practice for every repo: branches, formatting, comments, testing, markdown, PR reviews
 - @conventions/typescript.md — language-level TypeScript/JavaScript rules
 - @conventions/react.md — component, JSX, and accessibility rules
 - @conventions/ts-testing-all.md — testing rules shared by every TypeScript suite: test IDs, naming, assertions
 - @conventions/playwright.md — Playwright-specific: test layout and accessibility scans
 - @conventions/ts-unit-testing.md — Vitest-specific: unit test layout, fixtures
-- @conventions/all.md — practice for every repo: branches, formatting, comments, testing, markdown, PR reviews
 ```
 
 ## Biome config

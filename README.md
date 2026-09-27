@@ -27,7 +27,7 @@ Each consuming repo commits a **copy** of these files under its own `conventions
 
 Where a sync lands depends on the branch it runs from. On the default branch — every scheduled run, and a manual run left on `main` — it opens a pull request. Dispatch it manually from any other branch and it commits straight to that branch instead, so work already in flight can pull in the current conventions without a second pull request to merge.
 
-A repo syncs only the files it needs — the workflow names them explicitly, so a TypeScript project with no React syncs `typescript.md` and `all.md` and skips the rest. Because of that, a file here may reference the ones it builds on, but never the ones that build on it: `react.md` may point at `typescript.md`, while `typescript.md` names no framework file, since it cannot know which of them a given repo has. Concretely, only these are safe to assume from another file's presence:
+A repo should sync only the files it needs, and should sync every file that one it's syncing requires — the workflow names them explicitly, so a TypeScript project with no React syncs `typescript.md` and `all.md` and skips the rest, while one syncing `playwright.md` also syncs `ts-testing-all.md`, since `playwright.md` builds on it. Because of that, a file here may reference the ones it builds on, but never the ones that build on it: `react.md` may point at `typescript.md`, while `typescript.md` names no framework file, since it cannot know which of them a given repo has. Concretely, only these are safe to assume from another file's presence:
 
 - Any repo with TypeScript has `typescript.md`.
 - Any repo with React has `react.md` (and so `typescript.md`).

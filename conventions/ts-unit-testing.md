@@ -18,7 +18,6 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   - A helper that wraps one function and returns what it returns takes that function's name (e.g. `parse` for `parseConfig`, `evaluate` for `evaluateFilters`). This matters most where the wrapped thing is what the test block is testing.
   - Adhering to these rules should fulfil all/most cases, but there may be occasional exceptions. However, never use naming:
     - A bare noun (`list`, `row`)
-    - An `XOf`/`XFor`/`XIn` suffix
     - A word a type or the domain already owns -- more importantly, a function the domain already owns
 - **Asserting on an object**: Consecutive `expect`s picking properties off the same object are one `expect(obj).toMatchObject({ ... })` instead — a failure then shows the whole object against what was expected, rather than the first property that happened to differ. `expect.any(Date)` and friends cover a field whose exact value the test can't name. What a per-assertion message would have said goes in a line comment beside the property it explains.
 - **Asserting over a list of values**: A case that repeats one assertion across several inputs loops rather than restating it, and passes the value as the assertion message so a failure still names which one broke. Keep the reason a particular input is in the list as a comment beside it.

@@ -1,6 +1,6 @@
 # Playwright conventions
 
-Builds on the language-level rules in `./typescript.md`, and on `./ts-unit-testing.md`'s bullets marked **(all TS test suites)** — follow those too. A repo with Playwright specs has unit tests as well, so rather than restate a shared rule here, it stays there and this file just uses it.
+Builds on the language-level rules in `./typescript.md`, and the suite-agnostic rules in `./ts-testing-all.md` — follow those too.
 
 - **Layout**: All Playwright tests live in `playwright/`, split by project: `playwright/e2e/`, `playwright/a11y/`, `playwright/lighthouse/`, with shared helpers under `playwright/support/`. Type checking uses `playwright/tsconfig.json`, separate from the app's.
 - **Selectors**

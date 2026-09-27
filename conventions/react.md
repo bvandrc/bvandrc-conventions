@@ -15,6 +15,23 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   - **Variant styling**: Map variants to classes in a module-level constant (`satisfies Record<Variant, string>`) and index into it — not conditionals inside JSX.
   - **Tailwind sizing**: Use the `size-X` Tailwind class, not `w-X h-X`.
   - **Commenting a `className`**: A comment above a `className` string, or a `cn(...)` call, must describe the whole string that follows it. If it only explains one class or a subgroup, split that class or subgroup into its own `cn()` argument and move the comment to sit directly above just that argument, rather than leaving it above the full multi-class string it doesn't fully describe.
+
+    ```tsx
+    // Before: the comment only explains `h-9`, not the rest of the string.
+    className={cn(
+      // h-9 to match icon buttons and default buttons.
+      'flex h-9 w-full rounded-md border border-input bg-background px-3 py-2',
+      className
+    )}
+
+    // After: `h-9` gets its own argument, with the comment directly above it.
+    className={cn(
+      'flex w-full rounded-md border border-input bg-background px-3 py-2',
+      // to match icon buttons and default buttons.
+      'h-9',
+      className
+    )}
+    ```
 - **usehooks-ts**: Keep in mind that we can use this package for hooks (`useEventListener`, `useMediaQuery`, ...). Never use `useBoolean` — plain `useState` is no more code.
 - **Test IDs**: Use `data-testid` as the HTML attribute *and* as the prop name in component interfaces (not `testId`).
 - **Accessible names**: If an `aria-label`'s value would just repeat text already visible in a nearby element (e.g. a row label, column header, or adjacent title), use `aria-labelledby` pointing at that existing element's `id` (add one via React's `useId` if it doesn't have one) instead of duplicating the string. Don't introduce a new `sr-only` element just to make this work — if there's no existing visible text to point to, a plain `aria-label` is fine.

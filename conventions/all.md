@@ -1,6 +1,16 @@
 # General conventions
 
-Applies to every repo, independent of language or framework.
+Applies to every repo, independent of language or framework — this is the one file every repo has.
+
+Which of the other convention files a given repo also has follows from what that repo actually is, and a rule may assume it accordingly rather than re-deriving it each time:
+
+- Any repo with TypeScript has `./typescript.md`.
+- Any repo with React has `./react.md` (and so `./typescript.md`).
+- Any repo with a TypeScript test suite, of any kind, has `./ts-testing-all.md`.
+- Any repo with Playwright has `./playwright.md` (and so `./ts-testing-all.md`).
+- Any repo with Vitest unit tests has `./ts-unit-testing.md` (and so `./ts-testing-all.md`).
+
+A rule may name a file it depends on this way — what a reader of it needs is also true of them. It should not name a file that depends on it instead: which of these apply to a given repo is decided per repo, not fixed across all of them, so a downstream file may not even be present to check the claim against.
 
 ## Git and pull requests
 

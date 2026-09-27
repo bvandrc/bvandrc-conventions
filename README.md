@@ -17,7 +17,7 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 - `all.md` stands alone and applies to every repo, whatever the stack.
 - `typescript.md` is the base for everything else here.
 - `react.md` builds on `typescript.md`.
-- `ts-testing-all.md` builds on `typescript.md`, and holds the testing rules that don't split by suite.
+- `ts-testing-all.md` builds on `typescript.md`, and holds the testing rules that don't split by suite/scope (ie E2E vs Unit).
 - `playwright.md` and `ts-unit-testing.md` each build on both `typescript.md` and `ts-testing-all.md`.
 - `biome.base.json` is the executable half of `typescript.md` — sync the two together.
 

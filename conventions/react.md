@@ -17,18 +17,20 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   - **Commenting a `className`**: A comment above a `className` string, or a `cn(...)` call, must describe the whole string that follows it. If it only explains one class or a subgroup, split that class or subgroup into its own `cn()` argument and move the comment to sit directly above just that argument, rather than leaving it above the full multi-class string it doesn't fully describe.
 
     ```tsx
-    // Before: the comment only explains `h-9`, not the rest of the string.
+    // Before: the comment only explains the focus ring, not the rest of the string.
     className={cn(
-      // h-9 to match icon buttons and default buttons.
-      'flex h-9 w-full rounded-md border border-input bg-background px-3 py-2',
+      // Focus ring matches the button's own.
+      'flex w-full items-center rounded-md border px-3 py-2 text-base focus:outline-none focus:ring-2 md:px-4 md:text-sm',
       className
     )}
 
-    // After: `h-9` gets its own argument, with the comment directly above it.
+    // After: the focus and breakpoint classes get their own arguments, with the
+    // comment directly above the one it explains.
     className={cn(
-      'flex w-full rounded-md border border-input bg-background px-3 py-2',
-      // to match icon buttons and default buttons.
-      'h-9',
+      'flex w-full items-center rounded-md border px-3 py-2 text-base',
+      // Focus ring matches the button's own.
+      'focus:outline-none focus:ring-2',
+      'md:px-4 md:text-sm',
       className
     )}
     ```

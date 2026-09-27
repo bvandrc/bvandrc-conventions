@@ -10,8 +10,8 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
 - **Naming a test's helpers**: A helper declared inside a test file is named for what it _does_ rather than for what it _returns_ — verb first, prefixed by which kind of helper it is (see below). The main point of this is that a reader can tell the test's own scaffolding apart from the source functions a test file imports, which may not always be only the one under test: cases may often call a neighboring export to set something up, process a result, etc.
   - `render*` (e.g. `renderDialog`, `renderWithRouter`) — renders the subject.
   - `build*` (e.g. `buildUser`, `buildItems`) — builds and returns a fixture that is a constant object, array, or primitive that tests use as input / reference data. It should hold no UI or Testing Library call of its own.
-  - `create*` — makes something with side effects on the subject or on a fixture (where a `build*` only hands back a constant, that could, for example be passed to a `create*`)
-  - `mock*` — mocks a fixture rather than building one, i.e. where `vi.fn()` or another Vitest mock is what the case needs.
+  - `create*` (e.g. `createTempFile`, `createUser`) — makes something with side effects on the subject or on a fixture (where a `build*` only hands back a constant, that could, for example be passed to a `create*`)
+  - `mock*` (e.g. `mockFetch`, `mockLogger`) — mocks a fixture rather than building one, i.e. where `vi.fn()` or another Vitest mock is what the case needs.
   - `get*`, `query*`, `find*` (e.g. `getRow`, `queryBanner`) — for one wrapping the matching Testing Library call (`screen.getByX`, `screen.queryByX`, `screen.findByX`).
   - `get*` (e.g. `getUserIds`, reading a list of ids off a list of users) also covers one with no Testing Library call that pulls something out of a fixture or a function's input and hands back something more testable -- a deep property, or a transform on the input rather than a plain passthrough.
   - For one that acts, prefix with the verb itself (`clickRow`, `typeName`, `submitForm`).

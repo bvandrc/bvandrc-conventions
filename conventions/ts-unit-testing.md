@@ -10,12 +10,16 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
 - **Naming a test's helpers**: A helper declared inside a test file is named for what it does rather than for what it returns — verb first, prefixed by which kind of helper it is (see below). The point is that a reader can tell the test's own scaffolding from the source functions a case imports, which is not always only the one under test: cases may often call a neighbouring export to set something up or to read a result back.
   - `render*` — renders the subject (e.g. `renderDialog`, `renderWithRouter`).
   - `build*` — builds a fixture and returns it, mostly a constant object a case reads as reference data (e.g. `buildUser`, `buildItems`). It should hold no UI or Testing Library call of its own.
-  - `create*` — makes something with side effects on the subject or on a fixture, where a `build*` only hands back a constant.
-  - `mock*` — mocks a fixture rather than building one, i.e. where `vi.fn()` or another Vitest mock is what the case needs. One that only returns a value stays a `build*`.
-  - `get*`, `query*`, `find*` — for one wrapping the matching Testing Library call (`screen.getByX`, `screen.queryByX`, `screen.findByX`), so the prefix carries what that call does about absence: throws, tolerates it, or waits (`getRow`, `queryBanner`).
+  - `create*` — makes something with side effects on the subject or on a fixture (where a `build*` only hands back a constant, that could, for example be passed to a `create*`)
+  - `mock*` — mocks a fixture rather than building one, i.e. where `vi.fn()` or another Vitest mock is what the case needs.
+  - `get*`, `query*`, `find*` — for one wrapping the matching Testing Library call (`screen.getByX`, `screen.queryByX`, `screen.findByX`) (e.g. `getRow`, `queryBanner`).
+  - `get*` also covers one with no Testing Library call that pulls something out of a fixture or a function's input and hands back something more testable -- a deep property, or a transform on the input rather than a plain passthrough (e.g. `getUserIds`, reading a list of ids off a list of users).
   - For one that acts, prefix with the verb itself (`clickRow`, `typeName`, `submitForm`).
-  - A helper that wraps one function and returns what it returns takes that function's name (e.g. `parse` for `parseConfig`), which matters most where the wrapped thing is what the case is testing.
-  - None of them is a bare noun (`list`, `row`), an `XOf`/`XFor`/`XIn` suffix (`statusOf`, `rowFor`), or a word a type or the domain already owns (`type`, `group`).
+  - A helper that wraps one function and returns what it returns takes that function's name (e.g. `parse` for `parseConfig`, `evaluate` for `evaluateFilters`). This matters most where the wrapped thing is what the test block is testing.
+  - Adhering to these rules should fulfil all/most cases, but there may be occasional exceptions. However, never use naming:
+    - A bare noun (`list`, `row`)
+    - An `XOf`/`XFor`/`XIn` suffix (e.g. `getStatus` vs `statusOf`, `getRow` vs `rowFor`)
+    - A word a type or the domain already owns (`type`, `group`).
 - **Asserting on an object**: Consecutive `expect`s picking properties off the same object are one `expect(obj).toMatchObject({ ... })` instead — a failure then shows the whole object against what was expected, rather than the first property that happened to differ. `expect.any(Date)` and friends cover a field whose exact value the test can't name. What a per-assertion message would have said goes in a line comment beside the property it explains.
 - **Asserting over a list of values**: A case that repeats one assertion across several inputs loops rather than restating it, and passes the value as the assertion message so a failure still names which one broke. Keep the reason a particular input is in the list as a comment beside it.
 - **Fixture TS types**: A test builds its fixtures with the types the source already declares, never a looser local shape or an `as` cast to reach them — a fixture the app could never hold should fail to compile, and `satisfies` is what checks a literal without widening it. A test that deliberately feeds a value the types refuse says so with `// @ts-expect-error` and a line on what it is testing, which is also what fails once the type stops refusing it.

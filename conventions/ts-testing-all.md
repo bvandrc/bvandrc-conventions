@@ -2,8 +2,11 @@
 
 Builds on the language-level rules in `./typescript.md` — follow those too. Holds for any TypeScript test suite in the repo, Vitest and Playwright alike; `./ts-unit-testing.md` and `./playwright.md` each build on this rather than restating it.
 
-- **Test IDs**: A test that renders a component reaches an element by the test id registry in `./all.md` rather than by a testid it spells out itself.
-  - **Destructuring from the registry**: A deeply nested registry turns a call site into a long chain — `getByTestId(SELECTORS.SAVE_DIALOG.CONFIRM_DELETE_DIALOG.SUBMIT_BTN)` — that wraps lines and repeats the same prefix down a test file. Pull a leaf out to a local const where doing so doesn't cost the reader the cue that it's a selector rather than some other fixture. This is TypeScript-specific — it lives here rather than in `./all.md` because not every language's test suites destructure.
+- **Test ID registry**: Where tests reach a UI by test id, every `data-testid` value is defined in one registry before it is used, and every suite imports that same one — e.g. `shared/test-support/selectors.ts` for a repo that has both unit and end-to-end tests, `playwright/support/constants/selectors.ts` for one where end-to-end is the only suite. A second registry is a second name for one element, and the copy the failing suite doesn't read is the one that drifts.
+  - Nest by component.
+  - Name a container's own testid `SELF`.
+  - A selector specific to one test — odd or complicated, and not something another test would reach for — can stay in that test. What decides is whether it names something another test could want, not how many use it today: an id that would serve a second test goes in the registry the first time it is written.
+  - **Destructuring from the registry**: A deeply nested registry turns a call site into a long chain — `getByTestId(SELECTORS.SAVE_DIALOG.CONFIRM_DELETE_DIALOG.SUBMIT_BTN)` — that wraps lines and repeats the same prefix down a test file. Pull a leaf out to a local const where doing so doesn't cost the reader the cue that it's a selector rather than some other fixture.
     - Destructure when either of these holds, and both are fine to lean on together:
       - **The name alone says what it is**, even stripped of its `SELECTORS.X.Y` prefix — `CONFIRM_DELETE_DIALOG`, read inside a suite about that dialog, still reads as a selector on its own.
       - **The scope is narrow enough** that the reader can see the whole cluster is selectors from where it was declared — the top of a file that's entirely about one component, or inside the one `describe`/test block that concerns it.

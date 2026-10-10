@@ -17,7 +17,6 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
       __tests__/
     ```
     - **Folder only when needed**: A component with nothing private stays a single file. It moves into a folder when it first gets a private module.
-    - **Component file inside the folder**: Write `<Name>/<Name>.tsx`, never `<Name>.tsx` beside a `<Name>/` folder. An import of `<Name>` resolves to the file first, so the folder's `index.ts` would go unused.
     - **Import through the index**: Code outside the folder imports from the folder (its `index.ts`), never from its `hooks/` or `lib/` directly. The index carries a `biome-ignore lint/performance/noBarrelFile` with its reason, since the shared Biome config forbids barrels everywhere else. The one exception is where going through the index would close an import cycle: there, import the file directly.
     - **A second consumer promotes it**: When a private module gains a consumer outside its folder, move it up to the shared `hooks/` or `lib/` rather than importing into another component's folder.
     - **Grouping folders**: A folder that only groups related components (`primitives/`, `forms/`) belongs to no one component, so it takes no `index.ts`.

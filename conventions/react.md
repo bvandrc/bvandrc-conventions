@@ -5,7 +5,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
 - **File naming**: PascalCase for component primitives (`DropdownMenu.tsx`), camelCase for hooks (`useSession.tsx`, `useSettings.ts`); use `.tsx` when the file exports JSX.
 - **Components**: Arrow-function `const` with a named export. Default exports only where something requires one (e.g. page components for lazy-loaded routes).
 - **Folder layout**: Applies wherever the source root is (`src/`, `client/src/`, ...), and to pages and context providers the same as to components.
-  - **Shared hooks and lib**: The source root holds a `hooks/` folder for React hooks and a `lib/` folder for non-React helpers. Both are for modules that are generic by nature (about React or the browser rather than any one component) or that more than one component uses. A generic module goes here even if only one component uses it today: the private folders below are for what shouldn't be reused, not for what merely hasn't been yet.
+  - **Shared hooks and lib**: The source root holds a `hooks/` folder for React hooks and a `lib/` folder for non-React helpers. Both are for modules that are generic by nature (i.e., several components could easily use them) or that more than one component uses. A generic module goes here even if only one component uses it today: the private folders below are for what shouldn't be reused, not for what merely hasn't been yet.
   - **Private hooks and lib**: A hook or lib module that only makes sense for one component lives in that component's own folder, rather than in the shared `hooks/` or `lib/`. The folder says the module is not for reuse, which a shared folder can't say.
 
     ```

@@ -8,7 +8,7 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | --- | --- |
 | [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, comments, testing, pull request reviews |
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
-| [`conventions/react.md`](conventions/react.md) | Component, JSX, and accessibility rules |
+| [`conventions/react.md`](conventions/react.md) | Component, JSX, folder layout, and accessibility rules |
 | [`conventions/ts-testing-all.md`](conventions/ts-testing-all.md) | TypeScript testing rules shared by every suite: test IDs, naming, assertions |
 | [`conventions/playwright.md`](conventions/playwright.md) | Playwright-specific: test layout, accessibility scans |
 | [`conventions/ts-unit-testing.md`](conventions/ts-unit-testing.md) | Vitest-specific: unit test layout, fixtures |

@@ -27,6 +27,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   - **DOM prop types**: When a component wraps a DOM element and passes props through to it, compose from that element's prop types — extend them, or `Pick`/`Omit` the parts you need — rather than re-declaring the fields like `className`, `type`, `href`, etc.
   - **Component prop types**: Same goes for when a component passes props through to another component, whether ours or an external package's — export the inner component's props as `<ComponentName>Props` and compose from them with `Pick`/`Omit` rather than re-declaring the fields.
   - **Spreading props**: When there are many pass-through props to an inner component or element, spread them to it. (For one or two, name them explicitly.)
+  - **Children**: Declare `children: React.ReactNode` on the props type yourself rather than reaching for `React.PropsWithChildren`, which makes it optional — a component that renders its children should fail to compile when a caller leaves them out. Mark it optional only where the component is meant to render without any. Put it last in the props type, the same place it lands in JSX: after every attribute.
 - **Styling**
   - **Variant styling**: Map variants to classes in a module-level constant (`satisfies Record<Variant, string>`) and index into it — not conditionals inside JSX.
   - **Tailwind sizing**: Use the `size-X` Tailwind class, not `w-X h-X`.

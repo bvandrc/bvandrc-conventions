@@ -52,5 +52,6 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
     )}
     ```
 - **usehooks-ts**: Keep in mind that we can use this package for hooks (`useEventListener`, `useMediaQuery`, ...). Never use `useBoolean` — plain `useState` is no more code.
+- **@bvandrc/react-ui-hooks**: Our own hooks package ([bvandrc/react-ui-hooks](https://github.com/bvandrc/react-ui-hooks)) — the visual viewport and on-screen keyboard, focus handoff and return, press-and-hold, scrolling into view, and more. Check it before writing a browser-behavior hook of your own, and install it from npm where one fits.
 - **Test IDs**: Use `data-testid` as the HTML attribute *and* as the prop name in component interfaces (not `testId`).
 - **Accessible names**: If an `aria-label`'s value would just repeat text already visible in a nearby element (e.g. a row label, column header, or adjacent title), use `aria-labelledby` pointing at that existing element's `id` (add one via React's `useId` if it doesn't have one) instead of duplicating the string. Don't introduce a new `sr-only` element just to make this work — if there's no existing visible text to point to, a plain `aria-label` is fine.

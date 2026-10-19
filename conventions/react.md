@@ -54,18 +54,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
 - **Available packages**: Every React repo should have these installed — check them before writing your own.
   - **[usehooks-ts](https://usehooks-ts.com)**: General-purpose hooks (e.g. `useEventListener`, `useMediaQuery`, `useLocalStorage`, `useDebounceCallback`, and more).
     - Never use `useBoolean` — plain `useState` is no more code.
-  - **[@bvandrc/react-ui-hooks](https://github.com/bvandrc/react-ui-hooks)**: Our own package for UI behavior hooks, including:
-    - `useMaybeControlled`: lets a component's value be either controlled by its parent or managed internally.
-    - `useIsMobile`: whether the viewport is narrower than Tailwind's `md` breakpoint.
-    - `useFocusHandoff`, `useFocusReturn`: keep focus from getting lost when elements unmount or dialogs close.
-    - `useTimer`: a timeout you start from a handler, cleared automatically on unmount.
-    - `useHasPassed`: whether a date has passed, re-rendering the moment it does.
-    - `useStateRef`: `useState` plus a ref that always holds the latest value, for handlers that need it.
-    - `usePressHold`: press-and-hold gesture for mouse and touch, cancelled if the pointer moves.
-    - `usePressToggle`: lets a tap toggle something that hover or focus can also open.
-    - `useScrollOnFocus`: scrolls a focused element into view and keeps it there, including when the on-screen keyboard opens and closes.
-    - `useVisualViewportPin`: keeps a `fixed` full-screen element on the visible part of the screen when the mobile keyboard opens.
-    - `useMakeRoomForPopover`: scrolls a trigger's surroundings up so a tall popover has room to open.
-    - And more — see the README.
+  - **[@bvandrc/react-ui-hooks](https://github.com/bvandrc/react-ui-hooks#readme)**: Our own package of UI behavior hooks and helpers — viewport and device, page lifecycle, scrolling, focus, press and toggle, input, and state and timing — plus plain helpers for sharing and logging. Check its README before writing one of these yourself.
+    - Its `test-support` entry point has Vitest mocks for the browser APIs test DOMs lack (`matchMedia`, `visualViewport`, `ResizeObserver`, ...) — use them rather than hand-rolling your own.
 - **Test IDs**: Use `data-testid` as the HTML attribute *and* as the prop name in component interfaces (not `testId`).
 - **Accessible names**: If an `aria-label`'s value would just repeat text already visible in a nearby element (e.g. a row label, column header, or adjacent title), use `aria-labelledby` pointing at that existing element's `id` (add one via React's `useId` if it doesn't have one) instead of duplicating the string. Don't introduce a new `sr-only` element just to make this work — if there's no existing visible text to point to, a plain `aria-label` is fine.

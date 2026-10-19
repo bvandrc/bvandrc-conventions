@@ -15,4 +15,5 @@ Language-level rules, independent of framework or project. Framework-specific co
 - **Comments/JSDoc**: Describe *what* and *why* from the caller's perspective. Don't restate implementation or repeat what the type signature conveys. Keep to 1–2 lines. No hedge prefixes.
 - **Tooling**
   - **Linting and formatting**: Biome is the linter *and* formatter — no eslint/prettier here. Shared rules live in `./biome.base.json`, which the repo's own `biome.json` extends; keep repo-specific settings in that `biome.json` rather than editing the synced base.
+- **Available packages**
   - **es-toolkit**: Use `es-toolkit` functions when simpler than the builtin equivalents — especially `omit`/`pick`.

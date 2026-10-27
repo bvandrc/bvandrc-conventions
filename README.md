@@ -12,9 +12,11 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | [`conventions/ts-testing-all.md`](conventions/ts-testing-all.md) | TypeScript testing rules shared by every suite: test IDs, naming, assertions |
 | [`conventions/playwright.md`](conventions/playwright.md) | Playwright-specific: test layout, accessibility scans |
 | [`conventions/ts-unit-testing.md`](conventions/ts-unit-testing.md) | Vitest-specific: unit test layout, fixtures |
+| [`conventions/npm-publishing.md`](conventions/npm-publishing.md) | For packages published to npm: releasing, trusted publishing, `package.json` publish fields, versioning |
 | [`conventions/biome.base.json`](conventions/biome.base.json) | Shared Biome lint and format settings |
 
 - `all.md` stands alone and applies to every repo, whatever the stack.
+- `npm-publishing.md` stands alone too, and applies only to repos that publish to npm.
 - `typescript.md` is the base for everything else here.
 - `react.md` builds on `typescript.md`.
 - `ts-testing-all.md` builds on `typescript.md`, and holds the testing rules that don't split by suite/scope (ie E2E vs Unit).
@@ -34,6 +36,7 @@ A repo should sync only the files it needs, and should sync every file that one 
 - Any repo with a TypeScript test suite, of any kind, has `ts-testing-all.md`.
 - Any repo with Playwright has `playwright.md` (and so `ts-testing-all.md`).
 - Any repo with Vitest unit tests has `ts-unit-testing.md` (and so `ts-testing-all.md`).
+- Any repo that publishes to npm has `npm-publishing.md`.
 
 This governs edits made here, not what a consuming repo's agent needs to know — it can just look at what its own `conventions/` directory actually holds.
 
@@ -90,6 +93,7 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - @conventions/ts-testing-all.md — testing rules shared by every TypeScript suite: test IDs, naming, assertions
 - @conventions/playwright.md — Playwright-specific: test layout and accessibility scans
 - @conventions/ts-unit-testing.md — Vitest-specific: unit test layout, fixtures
+- @conventions/npm-publishing.md — for a package published to npm: releasing, `package.json` publish fields, versioning
 ```
 
 ## Biome config

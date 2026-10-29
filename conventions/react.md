@@ -29,7 +29,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
   - **Spreading props**: When there are many pass-through props to an inner component or element, spread them to it. (For one or two, name them explicitly.)
   - **Children**: Declare `children: React.ReactNode` on the props type yourself rather than reaching for `React.PropsWithChildren`, which makes it optional — a component that renders its children should fail to compile when a caller leaves them out. Mark it optional only where the component is meant to render without any. Put it last in the props type, the same place it lands in JSX: after every attribute.
 - **Styling**
-  - **Variant styling**: Map variants to classes in a module-level constant (`satisfies Record<Variant, string>`) and index into it — not conditionals inside JSX.
+  - **Variant styling**: A component's styling variants (`variant`, `size`, ...) go through [`cva`](https://cva.style), the tool shadcn/ui's primitives already use, whose `VariantProps` types them. A `cva` with no variants is just its base classes: pass those to `cn` instead. Any other mapping from a value to classes is a module-level constant indexed into — never conditionals inside JSX.
   - **Tailwind sizing**: Use the `size-X` Tailwind class, not `w-X h-X`.
   - **Commenting a `className`**: A comment above a `className` string, or a `cn(...)` call, must describe the whole string that follows it. If it only explains one class or a subgroup, split that class or subgroup into its own `cn()` argument and move the comment to sit directly above just that argument, rather than leaving it above the full multi-class string it doesn't fully describe.
 

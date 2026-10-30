@@ -87,7 +87,7 @@ For a repo syncing every markdown file, the `CLAUDE.md` import looks like this:
 
 Conventions live outside this file, synced from https://github.com/bvandrc/bvandrc-conventions — follow all of them:
 
-- @conventions/all.md — practice for every repo: branches, formatting, comments, testing, markdown, PR reviews
+- @conventions/all.md — practice for every repo: branches, formatting, comments, testing, writing, PR reviews
 - @conventions/typescript.md — language-level TypeScript/JavaScript rules
 - @conventions/react.md — component, JSX, and accessibility rules
 - @conventions/ts-testing-all.md — testing rules shared by every TypeScript suite: test IDs, naming, assertions

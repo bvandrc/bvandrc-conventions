@@ -13,7 +13,7 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | [`conventions/playwright.md`](conventions/playwright.md) | Playwright-specific: test layout, accessibility scans |
 | [`conventions/ts-unit-testing.md`](conventions/ts-unit-testing.md) | Vitest-specific: unit test layout, fixtures |
 | [`conventions/npm-publishing.md`](conventions/npm-publishing.md) | For packages published to npm: releasing, trusted publishing, `package.json` publish fields, versioning |
-| [`conventions/biome.base.json`](conventions/biome.base.json) | Shared Biome lint and format settings |
+| [`conventions/biome.base.jsonc`](conventions/biome.base.jsonc) | Shared Biome lint and format settings |
 
 - `all.md` stands alone and applies to every repo, whatever the stack.
 - `npm-publishing.md` stands alone too, and applies only to repos that publish to npm.
@@ -21,7 +21,7 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 - `react.md` builds on `typescript.md`.
 - `ts-testing-all.md` builds on `typescript.md`, and holds the testing rules that don't split by suite/scope (ie E2E vs Unit).
 - `playwright.md` and `ts-unit-testing.md` each build on both `typescript.md` and `ts-testing-all.md`.
-- `biome.base.json` is the executable half of `typescript.md` — sync the two together.
+- `biome.base.jsonc` is the executable half of `typescript.md` — sync the two together.
 
 ## How consuming repos use these
 
@@ -67,7 +67,7 @@ jobs:
   sync:
     uses: bvandrc/bvandrc-conventions/.github/workflows/sync.yml@main
     with:
-      files: all.md typescript.md react.md ts-testing-all.md playwright.md ts-unit-testing.md biome.base.json
+      files: all.md typescript.md react.md ts-testing-all.md playwright.md ts-unit-testing.md biome.base.jsonc
       apply-with-claude: true
     secrets: inherit
 ```
@@ -98,11 +98,11 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 
 ## Biome config
 
-`biome.base.json` rides the same sync as the markdown: it lands in `conventions/` like everything else, and the repo's `biome.json` extends it.
+`biome.base.jsonc` rides the same sync as the markdown: it lands in `conventions/` like everything else, and the repo's `biome.json` extends it.
 
 ```json
 {
-  "extends": ["./conventions/biome.base.json"],
+  "extends": ["./conventions/biome.base.jsonc"],
   "files": { "includes": ["**", "!!conventions"] }
 }
 ```
@@ -113,14 +113,10 @@ It is distributed by copy rather than as an npm package to match the way convent
 
 **What belongs where.**
 
-- **The base** holds:
-  - Formatter style, including `indentWidth` and `lineWidth`, stated explicitly so they survive a change to Biome's defaults.
-  - Markdown formatting, which Biome does by default from 2.6, with `proseWrap: "never"`: prose is never hard-wrapped, and Biome unwraps a wrapped paragraph rather than passing it. That also joins any two consecutive lines of plain text, so line-by-line content, like a `CLAUDE.md`'s `@conventions/...` imports, goes in a list or a table. It also turns on frontmatter parsing, which is off by default: without it, Biome reads a leading `---` block as a thematic break and a heading, and reformats it into one.
-  - YAML formatting, also on by default from 2.6, with single quotes to match the JavaScript style.
-  - The rules it raises from warning to error, including `style/useImportType` for the `import type` rule in `typescript.md`.
+- **The base** holds formatter style, Markdown and YAML formatting, and the rules it raises from warning to error. Each setting's reason is a comment beside it in [`biome.base.jsonc`](conventions/biome.base.jsonc).
 - **The repo's own `biome.json`** holds everything the shared file cannot know: `files.includes`, test-file `overrides`, and framework rules.
 
-The base deliberately stops short of enforcing every rule the conventions state, as the specifics may vary per repo. `noDefaultExport` is absent entirely, and `useFilenamingConvention` runs at Biome's defaults — which accept camelCase, kebab-case, snake_case, or a name matching an export — so it permits both a kebab-case util and a PascalCase component without requiring either where `typescript.md` and `react.md` ask for them. A repo that wants the stricter rules configures them itself.
+The base deliberately stops short of enforcing every rule the conventions state, as the specifics may vary per repo; its `linter` comment says which. A repo that wants the stricter rules configures them itself.
 
 **Validating it here.**
 
@@ -129,7 +125,7 @@ pnpm install
 pnpm check      # pnpm check:fix to apply
 ```
 
-**Sync it alongside `typescript.md`.** The sync deletes `conventions/` before copying, so a repo that lists `typescript.md` but forgets `biome.base.json` gets a `biome.json` pointing at a file that no longer exists. The failure is loud, but avoidable.
+**Sync it alongside `typescript.md`.** The sync deletes `conventions/` before copying, so a repo that lists `typescript.md` but forgets `biome.base.jsonc` gets a `biome.json` pointing at a file that no longer exists. The failure is loud, but avoidable.
 
 ### Notes
 

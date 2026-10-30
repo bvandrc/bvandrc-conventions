@@ -76,7 +76,7 @@ Then, in the consuming repo:
 
 1. Set `files` to the subset that repo needs. A backend TypeScript project might use `typescript.md all.md`.
 2. Import the same files from its `CLAUDE.md`, one `@conventions/<file>` per line. The `files` input decides what exists on disk; the imports decide what Claude loads, and the two should match.
-3. Enable **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**. It is off by default, and without it the run fails with `GitHub Actions is not permitted to create or approve pull requests` *after* pushing the branch — so the sync looks half-done.
+3. Enable **Settings → Actions → General → Allow GitHub Actions to create and approve pull requests**. It is off by default, and without it the run fails with `GitHub Actions is not permitted to create or approve pull requests` _after_ pushing the branch — so the sync looks half-done.
 4. Set up [Claude](#applying-conventions-with-claude), or drop `apply-with-claude`, `id-token`, and `secrets` from the file above to only sync.
 5. Run it once via **workflow_dispatch** to seed `conventions/`.
 
@@ -101,8 +101,13 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 `biome.base.json` rides the same sync as the markdown: it lands in `conventions/` like everything else, and the repo's `biome.json` extends it.
 
 ```json
-{ "extends": ["./conventions/biome.base.json"] }
+{
+  "extends": ["./conventions/biome.base.json"],
+  "files": { "includes": ["**", "!!conventions"] }
+}
 ```
+
+The `!!conventions` exclusion keeps Biome from formatting or linting the synced files themselves. They are formatted here before they sync, and every sync overwrites them anyway, so checking them downstream only costs time. `extends` still reads the base: a config file Biome loads is not subject to `files.includes`.
 
 It is distributed by copy rather than as an npm package to match the way convention `.md` files are synced.
 
@@ -110,6 +115,7 @@ It is distributed by copy rather than as an npm package to match the way convent
 
 - **The base** holds:
   - Formatter style, including `indentWidth` and `lineWidth`, stated explicitly so they survive a change to Biome's defaults.
+  - YAML formatting, which Biome does by default from 2.6 (as it does Markdown), set to single quotes to match the JavaScript style. Markdown keeps Biome's default `proseWrap: "preserve"`: `"never"` would enforce `all.md`'s no-hard-wrap rule, but it also joins consecutive lines like a `CLAUDE.md`'s list of `@conventions/...` imports into one paragraph, which breaks them.
   - The rules it raises from warning to error, including `style/useImportType` for the `import type` rule in `typescript.md`.
 - **The repo's own `biome.json`** holds everything the shared file cannot know: `files.includes`, test-file `overrides`, and framework rules.
 

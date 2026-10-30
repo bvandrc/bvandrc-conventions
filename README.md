@@ -115,7 +115,7 @@ It is distributed by copy rather than as an npm package to match the way convent
 
 - **The base** holds:
   - Formatter style, including `indentWidth` and `lineWidth`, stated explicitly so they survive a change to Biome's defaults.
-  - Markdown and YAML formatting, which Biome does by default from 2.6. Markdown sets `proseWrap: "never"`, so prose is never hard-wrapped: Biome unwraps a wrapped paragraph rather than passing it. It also joins any two consecutive lines of plain text, so line-by-line content, like a `CLAUDE.md`'s `@conventions/...` imports, goes in a list or a table. YAML uses single quotes to match the JavaScript style.
+  - Markdown and YAML formatting, which Biome does by default from 2.6. Markdown sets `proseWrap: "never"`, so prose is never hard-wrapped: Biome unwraps a wrapped paragraph rather than passing it. It also joins any two consecutive lines of plain text, so line-by-line content, like a `CLAUDE.md`'s `@conventions/...` imports, goes in a list or a table. It also turns on frontmatter parsing, which is off by default: without it, Biome reads a leading `---` block as a thematic break and a heading, and reformats it into one. YAML uses single quotes to match the JavaScript style.
   - The rules it raises from warning to error, including `style/useImportType` for the `import type` rule in `typescript.md`.
 - **The repo's own `biome.json`** holds everything the shared file cannot know: `files.includes`, test-file `overrides`, and framework rules.
 

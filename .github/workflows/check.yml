@@ -1,7 +1,7 @@
 name: Check
 
 # Validates the shared Biome config before it can sync anywhere. The root
-# biome.json extends conventions/biome.base.json, so Biome parses the base as
+# biome.json extends conventions/biome.base.jsonc, so Biome parses the base as
 # part of its config graph — an unknown rule or misspelled key fails here.
 on:
   push:

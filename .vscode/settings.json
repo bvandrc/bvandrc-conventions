@@ -1,7 +1,7 @@
 {
   "json.schemas": [
     {
-      "fileMatch": ["conventions/biome.base.json"],
+      "fileMatch": ["conventions/biome.base.jsonc"],
       "url": "./node_modules/@biomejs/biome/configuration_schema.json"
     }
   ]

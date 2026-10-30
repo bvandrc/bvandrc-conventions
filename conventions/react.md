@@ -16,6 +16,7 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
       lib/         non-React helpers only <Name> uses
       __tests__/
     ```
+
     - **Folder only when needed**: A component with nothing private stays a single file. It moves into a folder when it first gets a private module.
     - **Import through the index**: Code outside the folder imports from the folder (its `index.ts`), never from its `hooks/` or `lib/` directly. The index carries a `biome-ignore lint/performance/noBarrelFile` with its reason, since the shared Biome config forbids barrels everywhere else. The one exception is where going through the index would close an import cycle: there, import the file directly.
     - **A second consumer promotes it**: When a private module gains a consumer outside its folder, move it up to the shared `hooks/` or `lib/` rather than importing into another component's folder.
@@ -51,10 +52,11 @@ Builds on the language-level rules in `./typescript.md` — follow those too.
       className
     )}
     ```
+
 - **Available packages**: Every React repo should have these installed — check them before writing your own.
   - **[usehooks-ts](https://usehooks-ts.com)**: General-purpose hooks (e.g. `useEventListener`, `useMediaQuery`, `useLocalStorage`, `useDebounceCallback`, and more).
     - Never use `useBoolean` — plain `useState` is no more code.
   - **[@bvandrc/react-ui-hooks](https://github.com/bvandrc/react-ui-hooks#readme)**: Our own package of UI behavior hooks and helpers — viewport and device, page lifecycle, scrolling, focus, press and toggle, input, and state and timing — plus plain helpers for sharing and logging. Check its README before writing one of these yourself.
     - Its `test-support` entry point has Vitest mocks for the browser APIs test DOMs lack (`matchMedia`, `visualViewport`, `ResizeObserver`, ...) — use them rather than hand-rolling your own.
-- **Test IDs**: Use `data-testid` as the HTML attribute *and* as the prop name in component interfaces (not `testId`).
+- **Test IDs**: Use `data-testid` as the HTML attribute _and_ as the prop name in component interfaces (not `testId`).
 - **Accessible names**: If an `aria-label`'s value would just repeat text already visible in a nearby element (e.g. a row label, column header, or adjacent title), use `aria-labelledby` pointing at that existing element's `id` (add one via React's `useId` if it doesn't have one) instead of duplicating the string. Don't introduce a new `sr-only` element just to make this work — if there's no existing visible text to point to, a plain `aria-label` is fine.

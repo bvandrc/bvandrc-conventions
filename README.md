@@ -157,10 +157,11 @@ The key is stored in each repo rather than once here on purpose. Running Claude 
 
 ## PyPI release actions
 
-Two composite actions for repos that publish to PyPI, so their `release.yml` files share the steps rather than copies that drift:
+Three composite actions for repos that publish to PyPI, so their release workflows share the steps rather than copies that drift:
 
 - [`pypi-build`](.github/actions/pypi-build/action.yml) builds the sdist and wheel with [`hynek/build-and-inspect-python-package`](https://github.com/hynek/build-and-inspect-python-package), which checks the wheel's contents and the README PyPI will render, and uploads them as an artifact. It then checks the release's tag is `v` + their version. It outputs `version` and `artifact-name`.
 - [`release-notes-from-changelog`](.github/actions/release-notes-from-changelog/action.yml) sets a release's notes to its version's section of `CHANGELOG.md`, replacing any written on the release. Nothing in it is specific to Python.
+- [`sync-release-notes`](.github/actions/sync-release-notes/action.yml) rewrites every release's notes as its version's section of `CHANGELOG.md`, for after past entries are reworded, since a release's notes don't follow later edits to its section. A release whose version has no section keeps its notes. It takes `dry-run` to only print the new notes, and `changelog` for a changelog somewhere other than the root. It needs only the runner's own Python, so nothing in it is specific to Python repos either.
 
 The publish step itself stays in each repo's own `release.yml`. PyPI's trusted publishing matches the workflow file that runs `pypa/gh-action-pypi-publish`, and doesn't support running it from a reusable workflow, so it can't be shared the way the sync is.
 
@@ -212,7 +213,34 @@ jobs:
         run: gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
 ```
 
-The actions are used from `main`, as the sync workflow is, so a merged change reaches each repo's next release. `.github/workflows/check.yml` builds [an example package](test/pypi-package) with `pypi-build` on every pull request, including with a tag that doesn't match, so a broken change fails here first.
+A repo's `sync-release-notes.yml`, run by hand from the Actions tab:
+
+```yaml
+name: Sync Release Notes
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Only print the new notes, without changing any release
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # to edit the releases
+
+jobs:
+  sync:
+    name: Sync Release Notes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4 # for CHANGELOG.md
+      - uses: bvandrc/bvandrc-conventions/.github/actions/sync-release-notes@main
+        with:
+          dry-run: ${{ inputs.dry_run }}
+```
+
+The actions are used from `main`, as the sync workflow is, so a merged change reaches each repo's next release. `.github/workflows/check.yml` builds [an example package](test/pypi-package) with `pypi-build` on every pull request, including with a tag that doesn't match, and checks `sync-release-notes` reads its changelog, so a broken change fails here first.
 
 ## Consuming repos
 

@@ -2,9 +2,10 @@
 
 For repos that publish a package to PyPI.
 
-- **Releasing**: Bump `version` in `pyproject.toml` and add its `CHANGELOG.md` section, merge, then publish a GitHub release tagged `v<version>` (`gh release create v1.2.0 --title v1.2.0 --notes ""`). Publishing it runs `.github/workflows/release.yml`, built from the shared actions in [bvandrc-conventions](https://github.com/bvandrc/bvandrc-conventions) (its README has the full file):
+- **Releasing**: Bump `version` in `pyproject.toml` and add its `CHANGELOG.md` section, merge, then publish a GitHub release tagged `v<version>` (`gh release create v1.2.0 --title v1.2.0 --notes ""`). Publishing it runs `.github/workflows/release.yml`, built from the [shared PyPI release actions](https://github.com/bvandrc/bvandrc-conventions#pypi-release-actions) in bvandrc-conventions, whose README has the full file:
   - **Build job**: `pypi-build` builds and checks the distributions, uploads them as an artifact, and fails if the tag isn't `v` + their version.
   - **Publish job**: `release-notes-from-changelog` sets the release notes to the version's `CHANGELOG.md` section, replacing any written on the release, then `pypa/gh-action-pypi-publish` checks the distributions' metadata and uploads them, and the job attaches them to the release.
+  - **Separate jobs**: build and publish run as two jobs, so the build never holds the publish token.
   - **Change the shared steps there**, not by copying them back into a repo. Only the publish step lives in each repo, since trusted publishing matches the workflow file that runs it.
   - **Never publish from a machine**: a local `twine upload` skips the tag check and leaves the PyPI version with no GitHub release to point back at.
   - **A merge isn't a release**: merging to `main` publishes nothing. The release is the deliberate step.

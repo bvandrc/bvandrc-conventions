@@ -1,0 +1,31 @@
+name: Sync release notes
+description: >-
+  Rewrites every GitHub release's notes as its version's section of
+  CHANGELOG.md, e.g. after the changelog's entries are reworded. A release
+  whose version has no section keeps its notes.
+
+# The caller checks out the repo first, so the changelog is there, and grants
+# `contents: write` to edit the releases.
+inputs:
+  changelog:
+    description: The changelog's path from the repo root.
+    required: false
+    default: CHANGELOG.md
+  dry-run:
+    description: Only print the new notes, without changing any release.
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Sync the release notes
+      shell: bash
+      env:
+        GH_TOKEN: ${{ github.token }}
+        DRY_RUN: ${{ inputs.dry-run == 'true' && '--dry-run' || '' }}
+        CHANGELOG: ${{ inputs.changelog }}
+        SCRIPT: ${{ github.action_path }}/sync_release_notes.py
+      # the runner's own Python, since the script needs only the standard
+      # library and the gh CLI
+      run: python3 "$SCRIPT" --changelog "$CHANGELOG" $DRY_RUN

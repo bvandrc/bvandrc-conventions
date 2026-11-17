@@ -2,7 +2,7 @@
 
 For every Python repo, whether an app run from its checkout or a package published to PyPI. Where `all.md` is written for JavaScript tooling, this file says what it means in Python.
 
-- **Python version**: `requires-python` in `pyproject.toml` is a lower bound (`">= 3.12"`), never a cap.
+- **Python version**: Each repo picks its own minimum. `requires-python` in `pyproject.toml` states it as a lower bound (`">= 3.12"`), never a cap.
 - **Environment**: Work in a `.venv` at the repo root (gitignored), with the repo installed editable: `pip install -e ".[dev]"`, adding any other extras the code needs. An editable install makes imports resolve to the checkout rather than some other installed copy.
 - **`pyproject.toml` is the one config file**: the package, its dependencies, and every tool's settings (`[tool.ruff]`, `[tool.pyright]`, `[tool.pytest]`). No `setup.py`, `setup.cfg`, `requirements.txt`, or separate tool config files, so there's one place to look.
 - **Dependencies**

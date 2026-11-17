@@ -9,7 +9,7 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, comments, testing, pull request reviews |
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, folder layout, and accessibility rules |
-| [`conventions/ts-testing-all.md`](conventions/ts-testing-all.md) | TypeScript testing rules shared by every suite: test IDs, naming, assertions |
+| [`conventions/ts-testing-all.md`](conventions/ts-testing-all.md) | TypeScript testing rules shared by every suite: unit vs end-to-end, test IDs, locators, naming, assertions |
 | [`conventions/playwright.md`](conventions/playwright.md) | Playwright-specific: test layout, accessibility scans |
 | [`conventions/ts-unit-testing.md`](conventions/ts-unit-testing.md) | Vitest-specific: unit test layout, fixtures |
 | [`conventions/npm-publishing.md`](conventions/npm-publishing.md) | For packages published to npm: releasing, trusted publishing, `package.json` publish fields, versioning |
@@ -96,7 +96,7 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - @conventions/all.md — practice for every repo: branches, formatting, comments, testing, writing, PR reviews
 - @conventions/typescript.md — language-level TypeScript/JavaScript rules
 - @conventions/react.md — component, JSX, and accessibility rules
-- @conventions/ts-testing-all.md — testing rules shared by every TypeScript suite: test IDs, naming, assertions
+- @conventions/ts-testing-all.md — testing rules shared by every TypeScript suite: unit vs end-to-end, test IDs, locators, naming, assertions
 - @conventions/playwright.md — Playwright-specific: test layout and accessibility scans
 - @conventions/ts-unit-testing.md — Vitest-specific: unit test layout, fixtures
 - @conventions/npm-publishing.md — for a package published to npm: releasing, `package.json` publish fields, versioning

@@ -13,10 +13,14 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 | [`conventions/playwright.md`](conventions/playwright.md) | Playwright-specific: test layout, accessibility scans |
 | [`conventions/ts-unit-testing.md`](conventions/ts-unit-testing.md) | Vitest-specific: unit test layout, fixtures |
 | [`conventions/npm-publishing.md`](conventions/npm-publishing.md) | For packages published to npm: releasing, trusted publishing, `package.json` publish fields, versioning |
+| [`conventions/python.md`](conventions/python.md) | For every Python repo: tooling, Ruff and pyright setup, typing, layout, testing, CI |
+| [`conventions/pypi-publishing.md`](conventions/pypi-publishing.md) | For packages published to PyPI: releasing, trusted publishing, `pyproject.toml` publish fields, versioning, changelog |
 | [`conventions/biome.base.jsonc`](conventions/biome.base.jsonc) | Shared Biome lint and format settings |
 
 - `all.md` stands alone and applies to every repo, whatever the stack.
 - `npm-publishing.md` stands alone too, and applies only to repos that publish to npm.
+- `python.md` stands alone, and applies to every Python repo.
+- `pypi-publishing.md` stands alone too, and applies only to repos that publish to PyPI.
 - `typescript.md` is the base for everything else here.
 - `react.md` builds on `typescript.md`.
 - `ts-testing-all.md` builds on `typescript.md`, and holds the testing rules that don't split by suite/scope (ie E2E vs Unit).
@@ -37,6 +41,8 @@ A repo should sync only the files it needs, and should sync every file that one 
 - Any repo with Playwright has `playwright.md` (and so `ts-testing-all.md`).
 - Any repo with Vitest unit tests has `ts-unit-testing.md` (and so `ts-testing-all.md`).
 - Any repo that publishes to npm has `npm-publishing.md`.
+- Any Python repo has `python.md`.
+- Any repo that publishes to PyPI has `pypi-publishing.md`.
 
 This governs edits made here, not what a consuming repo's agent needs to know — it can just look at what its own `conventions/` directory actually holds.
 
@@ -95,6 +101,8 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - @conventions/ts-unit-testing.md — Vitest-specific: unit test layout, fixtures
 - @conventions/npm-publishing.md — for a package published to npm: releasing, `package.json` publish fields, versioning
 ```
+
+A Python repo imports `all.md`, `python.md`, and, if it publishes to PyPI, `pypi-publishing.md`. Leave `apply-with-claude` off for now: its Claude can only run JavaScript package managers (see [Notes](#notes-1)), so it can't install a Python repo's dependencies or run its checks.
 
 ## Biome config
 
@@ -241,7 +249,3 @@ jobs:
 ```
 
 The actions are used from `main`, as the sync workflow is, so a merged change reaches each repo's next release. `.github/workflows/check.yml` builds [an example package](test/pypi-package) with `pypi-build` on every pull request, including with a tag that doesn't match, and checks `sync-release-notes` reads its changelog, so a broken change fails here first.
-
-## Consuming repos
-
-- [bvandrc-project-template-react-frontend](https://github.com/bvandrc/bvandrc-project-template-react-frontend)

@@ -1,0 +1,15 @@
+# A minimal package for the PyPI actions' check in .github/workflows/check.yml. Never published.
+[build-system]
+requires = ["setuptools>=77.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bvandrc-conventions-example-package"
+version = "0.1.0"
+description = "Test package for bvandrc-conventions' PyPI actions"
+readme = "README.md"
+requires-python = ">= 3.11"
+license = "MIT"
+
+[tool.setuptools.packages.find]
+where = ["src"]

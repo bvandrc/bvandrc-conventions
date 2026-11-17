@@ -3,6 +3,8 @@ name: Check
 # Validates the shared Biome config before it can sync anywhere. The root
 # biome.json extends conventions/biome.base.jsonc, so Biome parses the base as
 # part of its config graph — an unknown rule or misspelled key fails here.
+# Also builds an example package with the shared PyPI build action, so a
+# change to it fails here rather than in another repo's release.
 on:
   push:
     branches: [main]
@@ -27,3 +29,45 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm check
+
+  pypi-build:
+    name: PyPI build action
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build the example package
+        id: build
+        uses: ./.github/actions/pypi-build
+        with:
+          tag: v0.1.0
+          working-directory: test/pypi-package
+
+      - name: Check the version it gives
+        env:
+          VERSION: ${{ steps.build.outputs.version }}
+        run: test "$VERSION" = 0.1.0
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: downloaded
+
+      - name: Check the distributions were uploaded
+        run: ls downloaded/*.whl downloaded/*.tar.gz
+
+      - name: Build with a tag that doesn't match the version
+        id: wrong-tag
+        continue-on-error: true
+        uses: ./.github/actions/pypi-build
+        with:
+          tag: v9.9.9
+          working-directory: test/pypi-package
+          artifact-name: dist-wrong-tag
+
+      - name: Check it failed
+        if: steps.wrong-tag.outcome != 'failure'
+        run: |
+          echo "::error::The build should fail when the tag doesn't match the version."
+          exit 1

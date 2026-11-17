@@ -155,6 +155,65 @@ The key is stored in each repo rather than once here on purpose. Running Claude 
 - **Claude's shell is limited to JavaScript tooling.** Besides file edits and a handful of `git` commands, it may run only `corepack`, `npm`, `npx`, `pnpm`, and `yarn`. A repo on another stack needs its package manager added to the job's `--allowedTools` before Claude can install its dependencies.
 - **Only the pull request path runs Claude.** A dispatch from a non-default branch commits the sync to that branch and stops there.
 
+## PyPI release actions
+
+Two composite actions for repos that publish to PyPI, so their `release.yml` files share the steps rather than copies that drift:
+
+- [`pypi-build`](.github/actions/pypi-build/action.yml) checks the release's tag is `v` + `pyproject.toml`'s version, builds the sdist and wheel, and uploads them as the `dist` artifact. It outputs `version`.
+- [`release-notes-from-changelog`](.github/actions/release-notes-from-changelog/action.yml) fills in a release published with empty notes from its version's section of `CHANGELOG.md`, and leaves notes written on the release alone. Nothing in it is specific to Python.
+
+The publish step itself stays in each repo's own `release.yml`. PyPI's trusted publishing matches the workflow file that runs `pypa/gh-action-pypi-publish`, and doesn't support running it from a reusable workflow, so it can't be shared the way the sync is. That action also checks the distributions' metadata (`twine check`) before uploading.
+
+A repo's `release.yml`, with the build in its own job so the publish token never reaches the build:
+
+```yaml
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.build.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: build
+        uses: bvandrc/bvandrc-conventions/.github/actions/pypi-build@main
+
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/<package>/
+    permissions:
+      contents: write # to fill in the release's notes and attach the distributions to it
+      id-token: write # for PyPI's trusted publishing
+    steps:
+      - uses: actions/checkout@v4 # for CHANGELOG.md
+      - uses: bvandrc/bvandrc-conventions/.github/actions/release-notes-from-changelog@main
+        with:
+          version: ${{ needs.build.outputs.version }}
+          version-scheme: pep440
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Attach the distributions to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+```
+
+The actions are used from `main`, as the sync workflow is, so a merged change reaches each repo's next release. `.github/workflows/check.yml` builds [an example package](test/pypi-package) with `pypi-build` on every pull request, including with a tag that doesn't match, so a broken change fails here first.
+
 ## Consuming repos
 
 - [bvandrc-project-template-react-frontend](https://github.com/bvandrc/bvandrc-project-template-react-frontend)

@@ -1,0 +1,51 @@
+name: Release notes from the changelog
+description: >-
+  Fills in a GitHub release published with empty notes from its version's
+  section of CHANGELOG.md. Notes written on the release are left alone.
+
+# The caller checks out the repo first, so the changelog is there, and grants
+# `contents: write` to edit the release.
+inputs:
+  version:
+    description: The version whose section to use, e.g. 1.2.0.
+    required: true
+  tag:
+    description: The release's tag. Defaults to the published release's.
+    required: false
+    default: ${{ github.event.release.tag_name }}
+  changelog:
+    description: The path to the changelog.
+    required: false
+    default: CHANGELOG.md
+  version-scheme:
+    description: How the changelog's versions are read, `semver` or `pep440`.
+    required: false
+    default: semver
+  token:
+    description: A token that can edit the repo's releases.
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - name: Read the version's changelog section
+      id: changelog
+      if: github.event.release.body == ''
+      # it fails when the changelog has no section for the version, which
+      # should leave the notes empty, not stop the release
+      continue-on-error: true
+      uses: mindsers/changelog-reader-action@1faaf50aa09d5793d9a100819973df801febfb31 # v2.4.0
+      with:
+        path: ${{ inputs.changelog }}
+        version: ${{ inputs.version }}
+        version_scheme: ${{ inputs.version-scheme }}
+
+    - name: Fill in the release notes
+      if: steps.changelog.outcome == 'success'
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        TAG: ${{ inputs.tag }}
+        NOTES_FILE: ${{ steps.changelog.outputs.changes_file }}
+      run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file "$NOTES_FILE"

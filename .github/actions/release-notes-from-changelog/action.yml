@@ -1,7 +1,8 @@
 name: Release notes from the changelog
 description: >-
-  Sets a GitHub release's notes to its version's section of CHANGELOG.md,
-  replacing any written on the release, so the changelog is the one source.
+  Sets the published release's notes to its version's section of
+  CHANGELOG.md, replacing any written on the release, so the changelog is the
+  one source.
 
 # The caller checks out the repo first, so the changelog is there, and grants
 # `contents: write` to edit the release.
@@ -9,22 +10,6 @@ inputs:
   version:
     description: The version whose section to use, e.g. 1.2.0.
     required: true
-  tag:
-    description: The release's tag. Defaults to the published release's.
-    required: false
-    default: ${{ github.event.release.tag_name }}
-  changelog:
-    description: The path to the changelog.
-    required: false
-    default: CHANGELOG.md
-  version-scheme:
-    description: How the changelog's versions are read, `semver` or `pep440`.
-    required: false
-    default: semver
-  token:
-    description: A token that can edit the repo's releases.
-    required: false
-    default: ${{ github.token }}
 
 runs:
   using: composite
@@ -36,15 +21,15 @@ runs:
       continue-on-error: true
       uses: mindsers/changelog-reader-action@v2.4.0
       with:
-        path: ${{ inputs.changelog }}
+        path: CHANGELOG.md
         version: ${{ inputs.version }}
-        version_scheme: ${{ inputs.version-scheme }}
+        version_scheme: pep440
 
     - name: Fill in the release notes
       if: steps.changelog.outcome == 'success'
       shell: bash
       env:
-        GH_TOKEN: ${{ inputs.token }}
-        TAG: ${{ inputs.tag }}
+        GH_TOKEN: ${{ github.token }}
+        TAG: ${{ github.event.release.tag_name }}
         NOTES_FILE: ${{ steps.changelog.outputs.changes_file }}
       run: gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file "$NOTES_FILE"

@@ -200,7 +200,6 @@ jobs:
       - uses: bvandrc/bvandrc-conventions/.github/actions/release-notes-from-changelog@main
         with:
           version: ${{ needs.build.outputs.version }}
-          version-scheme: pep440
       - uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.artifact-name }}

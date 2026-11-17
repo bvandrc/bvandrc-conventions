@@ -221,10 +221,3 @@ jobs:
 ```
 
 The actions are used from `main`, as the sync workflow is, so a merged change reaches each repo's next release. `.github/workflows/check.yml` builds [an example package](test/pypi-package) with `pypi-build` on every pull request, including with a tag that doesn't match, so a broken change fails here first.
-
-## Consuming repos
-
-- [bvandrc-project-template-react-frontend](https://github.com/bvandrc/bvandrc-project-template-react-frontend)
-- [SD](https://github.com/bvandrc/SD)
-- [serato-tools](https://github.com/bvandrc/serato-tools)
-- [mik-automator](https://github.com/bvandrc/mik-automator)

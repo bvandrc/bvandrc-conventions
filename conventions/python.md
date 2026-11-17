@@ -1,15 +1,15 @@
 # Python conventions
 
-For every Python repo, whether an app run from its checkout or a package published to PyPI. `all.md` applies too, except where it's written for JavaScript: its npm `format` script, caret dependency ranges, and frontend testing. This file says what Python repos do instead.
+For every Python repo, whether an app run from its checkout or a package published to PyPI. `all.md` applies too.
 
 - **Python version**: Each repo picks its own minimum. `requires-python` in `pyproject.toml` states it as a lower bound (`">= 3.12"`), never a cap.
 - **Environment**: Work in a `.venv` at the repo root (gitignored), with the repo installed editable: `pip install -e ".[dev]"`, adding any other extras the code needs. An editable install makes imports resolve to the checkout rather than some other installed copy.
 - **`pyproject.toml` is the one config file**: the package, its dependencies, and every tool's settings (`[tool.ruff]`, `[tool.pyright]`, `[tool.pytest]`). No `setup.py`, `setup.cfg`, `requirements.txt`, or separate tool config files, so there's one place to look.
 - **Dependencies**
-  - **Ranges**: Each repo picks its own bounds, whatever `all.md` says about caret ranges. The one shared rule is Ruff's pin, below.
+  - **Ranges**: Each repo picks its own bounds. The one shared rule is Ruff's pin, below.
   - **Extras**: The tools only a developer runs go in a `dev` extra (Ruff, pyright, pytest, and any linter the repo adds), so a plain install doesn't pull them in. Anything heavy that only one feature imports goes in an extra named for that feature, so the rest of the package installs without it.
   - **Only what's imported**: Declare a dependency only where the repo's own code imports it, and declare everything it does import, so it never relies on one arriving through another package.
-- **Formatting and linting**: Ruff is both linter and formatter. The repo's "format script", which `all.md` says to run before every commit, is `ruff check --fix .` then `ruff format .`.
+- **Formatting and linting**: Ruff is both linter and formatter. The format script, which `all.md` says to run before every commit, is `ruff check --fix .` then `ruff format .`.
   - **Line length**: Each repo picks its own, set once in `[tool.ruff]` so the formatter and linter agree.
   - **Rules**: `select = ["ALL"]`, every stable rule, with an `ignore` list in which each entry has a comment giving its reason. List whole families first, then single rules from families that are otherwise on. `extend-select` brings back any rule a family ignore would otherwise turn off.
     - **The usual ignores**: Each still needs its own reason in the repo, since the reason is what says whether it still applies.

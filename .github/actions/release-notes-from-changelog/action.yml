@@ -34,7 +34,7 @@ runs:
       # it fails when the changelog has no section for the version, which
       # should leave the notes as they are, not stop the release
       continue-on-error: true
-      uses: mindsers/changelog-reader-action@v2
+      uses: mindsers/changelog-reader-action@v2.4.0
       with:
         path: ${{ inputs.changelog }}
         version: ${{ inputs.version }}

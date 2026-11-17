@@ -41,7 +41,7 @@ runs:
     # and uploads the distributions
     - name: Build and inspect
       id: build
-      uses: hynek/build-and-inspect-python-package@v3
+      uses: hynek/build-and-inspect-python-package@v3.0.1 # it has no v3 tag
       with:
         path: ${{ inputs.working-directory }}
         python-version: ${{ inputs.python-version }}

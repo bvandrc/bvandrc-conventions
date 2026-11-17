@@ -1,7 +1,7 @@
 name: Release notes from the changelog
 description: >-
-  Fills in a GitHub release published with empty notes from its version's
-  section of CHANGELOG.md. Notes written on the release are left alone.
+  Sets a GitHub release's notes to its version's section of CHANGELOG.md,
+  replacing any written on the release, so the changelog is the one source.
 
 # The caller checks out the repo first, so the changelog is there, and grants
 # `contents: write` to edit the release.
@@ -31,9 +31,8 @@ runs:
   steps:
     - name: Read the version's changelog section
       id: changelog
-      if: github.event.release.body == ''
       # it fails when the changelog has no section for the version, which
-      # should leave the notes empty, not stop the release
+      # should leave the notes as they are, not stop the release
       continue-on-error: true
       uses: mindsers/changelog-reader-action@1faaf50aa09d5793d9a100819973df801febfb31 # v2.4.0
       with:

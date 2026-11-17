@@ -11,7 +11,6 @@ For repos that publish a package to PyPI.
   - **Never publish from a machine**: a local `twine upload` skips the tag check and leaves the PyPI version with no GitHub release to point back at.
   - **A merge isn't a release**: merging to `main` publishes nothing. The release is the deliberate step.
 - **Trusted publishing, no token**: PyPI trusts the release workflow's OIDC token (`id-token: write`), configured as a trusted publisher on the project's PyPI settings page. The publish job runs in a `pypi` environment, whose `url` is the project's PyPI page. There is no `PYPI_TOKEN` secret to store or rotate, and none should be added.
-  - **Renaming**: PyPI's trusted publisher names the workflow file and the environment, so renaming either means updating it on PyPI too. Say so in a comment at the top of `release.yml`.
   - **Permissions**: The publish job asks for `contents: write` (to edit the release's notes and attach the distributions) and `id-token: write`, each with a comment saying why.
 - **Versions are final**: PyPI never accepts the same version twice, even after a release is deleted, so a bad upload means a new version.
 - **`pyproject.toml`**

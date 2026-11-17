@@ -3,8 +3,9 @@ name: Check
 # Validates the shared Biome config before it can sync anywhere. The root
 # biome.json extends conventions/biome.base.jsonc, so Biome parses the base as
 # part of its config graph — an unknown rule or misspelled key fails here.
-# Also builds an example package with the shared PyPI build action, so a
-# change to it fails here rather than in another repo's release.
+# Also builds an example package with the shared PyPI build action, and checks
+# the sync-release-notes action reads its changelog, so a change to either
+# fails here rather than in another repo's release.
 on:
   push:
     branches: [main]
@@ -71,3 +72,36 @@ jobs:
         run: |
           echo "::error::The build should fail when the tag doesn't match the version."
           exit 1
+
+  sync-release-notes:
+    name: Sync release notes action
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check it reads each version's changelog section
+        env:
+          ACTION_DIR: .github/actions/sync-release-notes
+          CHANGELOG: test/pypi-package/CHANGELOG.md
+        run: |
+          python3 - <<'PY'
+          import os
+          import sys
+
+          sys.path.insert(0, os.environ["ACTION_DIR"])
+          from sync_release_notes import changelog_sections, release_notes
+
+          with open(os.environ["CHANGELOG"], encoding="utf-8") as f:
+              sections = changelog_sections(f.read())
+          assert sections == {"0.2.0": "- **Feature:** Something new.", "0.1.0": "- First release."}, sections
+          notes = release_notes("- New.", "- Old.\r\n\r\nPublished to [PyPI](https://pypi.org).")
+          assert notes == "- New.\n\nPublished to [PyPI](https://pypi.org).", notes
+          PY
+
+      # this repo has no releases, so it only checks the action runs
+      - name: Run it
+        uses: ./.github/actions/sync-release-notes
+        with:
+          changelog: test/pypi-package/CHANGELOG.md
+          dry-run: true

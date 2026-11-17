@@ -2,12 +2,10 @@
 
 For repos that publish a package to PyPI.
 
-- **Releasing**: Bump `version` in `pyproject.toml` and add its `CHANGELOG.md` section, merge, then publish a GitHub release tagged `v<version>` with empty notes (`gh release create v1.2.0 --title v1.2.0 --notes ""`). Publishing it runs `.github/workflows/release.yml`, which:
-  - fails before building if the tag isn't `v` + the version;
-  - fills in empty release notes from the version's `CHANGELOG.md` section (`mindsers/changelog-reader-action`, pinned by commit SHA, with `version_scheme: pep440`), leaving notes written on the release alone, and leaving them empty rather than failing when the changelog has no section for it;
-  - builds with `python -m build`, and checks the result with `twine check --strict`;
-  - uploads to PyPI with `pypa/gh-action-pypi-publish`;
-  - attaches the built distributions to the release (`gh release upload "$TAG" dist/* --clobber`).
+- **Releasing**: Bump `version` in `pyproject.toml` and add its `CHANGELOG.md` section, merge, then publish a GitHub release tagged `v<version>` with empty notes (`gh release create v1.2.0 --title v1.2.0 --notes ""`). Publishing it runs `.github/workflows/release.yml`, built from the shared actions in [bvandrc-conventions](https://github.com/bvandrc/bvandrc-conventions) (its README has the full file):
+  - **Build job**: `pypi-build` fails before building if the tag isn't `v` + the version, then builds and uploads the `dist` artifact.
+  - **Publish job**: `release-notes-from-changelog` fills in empty release notes from the version's `CHANGELOG.md` section, then `pypa/gh-action-pypi-publish` checks the distributions' metadata and uploads them, and the job attaches them to the release.
+  - **Change the shared steps there**, not by copying them back into a repo. Only the publish step lives in each repo, since trusted publishing matches the workflow file that runs it.
   - **Never publish from a machine**: a local `twine upload` skips the tag check and leaves the PyPI version with no GitHub release to point back at.
   - **A merge isn't a release**: merging to `main` publishes nothing. The release is the deliberate step.
 - **Trusted publishing, no token**: PyPI trusts the release workflow's OIDC token (`id-token: write`), configured as a trusted publisher on the project's PyPI settings page. The publish job runs in a `pypi` environment, whose `url` is the project's PyPI page. There is no `PYPI_TOKEN` secret to store or rotate, and none should be added.

@@ -8,9 +8,14 @@ description: >-
 # file: PyPI's trusted publishing matches the workflow that runs
 # pypa/gh-action-pypi-publish, so that step can't move in here or into a
 # reusable workflow.
-# The inputs are for this repo's check of the action (.github/workflows/check.yml);
-# a release workflow passes none.
+# tag, working-directory, and upload-name-suffix are for this repo's check of
+# the action (.github/workflows/check.yml); a release workflow passes none.
 inputs:
+  python-version:
+    description: The Python that runs the build.
+    required: false
+    # 3.14 has build issues
+    default: '3.13'
   tag:
     description: The release's tag. Defaults to the published release's.
     required: false
@@ -42,8 +47,7 @@ runs:
       uses: hynek/build-and-inspect-python-package@v3.0.1 # it has no v3 tag
       with:
         path: ${{ inputs.working-directory }}
-        # 3.14 has build issues
-        python-version: '3.13'
+        python-version: ${{ inputs.python-version }}
         upload-name-suffix: ${{ inputs.upload-name-suffix }}
 
     # a tag that doesn't match would publish the release's notes and

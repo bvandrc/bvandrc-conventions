@@ -51,7 +51,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: ${{ steps.build.outputs.artifact-name }}
           path: downloaded
 
       - name: Check the distributions were uploaded
@@ -64,7 +64,7 @@ jobs:
         with:
           tag: v9.9.9
           working-directory: test/pypi-package
-          artifact-name: dist-wrong-tag
+          upload-name-suffix: -wrong-tag
 
       - name: Check it failed
         if: steps.wrong-tag.outcome != 'failure'

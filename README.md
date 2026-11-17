@@ -159,10 +159,10 @@ The key is stored in each repo rather than once here on purpose. Running Claude 
 
 Two composite actions for repos that publish to PyPI, so their `release.yml` files share the steps rather than copies that drift:
 
-- [`pypi-build`](.github/actions/pypi-build/action.yml) checks the release's tag is `v` + `pyproject.toml`'s version, builds the sdist and wheel, and uploads them as the `dist` artifact. It outputs `version`.
+- [`pypi-build`](.github/actions/pypi-build/action.yml) builds the sdist and wheel with [`hynek/build-and-inspect-python-package`](https://github.com/hynek/build-and-inspect-python-package), which checks the wheel's contents and the README PyPI will render, and uploads them as an artifact. It then checks the release's tag is `v` + their version. It outputs `version` and `artifact-name`.
 - [`release-notes-from-changelog`](.github/actions/release-notes-from-changelog/action.yml) fills in a release published with empty notes from its version's section of `CHANGELOG.md`, and leaves notes written on the release alone. Nothing in it is specific to Python.
 
-The publish step itself stays in each repo's own `release.yml`. PyPI's trusted publishing matches the workflow file that runs `pypa/gh-action-pypi-publish`, and doesn't support running it from a reusable workflow, so it can't be shared the way the sync is. That action also checks the distributions' metadata (`twine check`) before uploading.
+The publish step itself stays in each repo's own `release.yml`. PyPI's trusted publishing matches the workflow file that runs `pypa/gh-action-pypi-publish`, and doesn't support running it from a reusable workflow, so it can't be shared the way the sync is.
 
 A repo's `release.yml`, with the build in its own job so the publish token never reaches the build:
 
@@ -179,6 +179,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.build.outputs.version }}
+      artifact-name: ${{ steps.build.outputs.artifact-name }}
     steps:
       - uses: actions/checkout@v4
       - id: build
@@ -202,7 +203,7 @@ jobs:
           version-scheme: pep440
       - uses: actions/download-artifact@v4
         with:
-          name: dist
+          name: ${{ needs.build.outputs.artifact-name }}
           path: dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
       - name: Attach the distributions to the release

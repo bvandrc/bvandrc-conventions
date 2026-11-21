@@ -14,12 +14,12 @@ Applies to every repo, independent of language or framework.
   - **Squash merges**: the PR title is the commit message, with ` (#<number>)` appended.
   - **Squashing several PRs together**: only on command. One summary covering them all, with every PR number at the end, oldest first (`chore: update dependencies (#534, #538, #539)`).
 - **PR review threads**: Always reply on the thread with what changed (or why it wasn't changed), then mark the thread resolved. Do this for every thread you act on, not just the ones that needed discussion.
-- **Labels**: Every PR and issue carries at least one _type_ label; more than one is fine where a change really is more than one kind.
+- **Labels**: Every PR, and every issue that asks for a change, carries at least one _type_ label; more than one is fine where a change really is more than one kind.
   - **Type labels**: named for the Conventional Commits type, except `feat` is `feature` and `perf` is `performance`. A PR's labels include its title's type.
     - **`bug` and `fix`**: `bug` is for issues, `fix` for PRs. A PR is never `bug`.
   - **Issues**: titled like the PR expected to close them (`feat: …`), except bugs, which are `bug: …`. `question` stays on while the issue waits on an answer before work can start.
   - **Action labels**: a label a workflow reads (`run ci`, `preview`, `refresh-data`) is named for what adding it does, with a GitHub description saying so. Each repo's `CLAUDE.md` lists its own in a table: label, what adding it does, and the workflow that reads it.
-  - **Other labels** (`a11y`, `question`, `help wanted`, `duplicate`, `wontfix`): go beside the type label, never in place of it. Only `a11y` has a title form, as a scope (`fix(a11y): …`). Close `duplicate` and `wontfix` issues with GitHub's matching reason too.
+  - **Other labels** (`a11y`, `question`, `help wanted`, `duplicate`, `wontfix`): go beside the type label rather than in place of it. The exception is an issue that only asks something, with no change in view yet, which carries `question` alone. Only `a11y` has a title form, as a scope (`fix(a11y): …`). Close `duplicate` and `wontfix` issues with GitHub's matching reason too.
   - **GitHub's defaults**: bring them in line with the table below, renaming rather than recreating so existing issues and PRs carry across.
 
 | GitHub default | Becomes |

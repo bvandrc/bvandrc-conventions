@@ -41,7 +41,7 @@ A repo that already has a `perf` label renames it to `performance`.
 
 - **Testing internals**: Never widen a module's API for a test. Where something is only public so a test file can reach it, keep it internal and drive it through the public thing that uses it — the test then pins behaviour someone can actually depend on, and survives the internal being renamed or absorbed. A repo's test-support module is the exception: being imported by tests is its whole job.
 - **Checking a new test can fail**: A test that passes against broken source pins nothing. Before keeping a new case, break the behaviour it names and confirm that case — and ideally only that case — goes red.
-- **Trivial cases**: Don't write a case whose whole subject is one plain line — a one-line function or wrapper, a guard, a ternary, a fallback, a prop spread, or a single attribute or class. It restates the line rather than pinning behaviour anyone could get wrong, and is one more case to read and keep in step. Where that line feeds something larger, the case for the larger thing covers it. A single assertion still earns its place where it checks that two sources stay in step, like a theme's tokens against the CSS they mirror, since that pins no one line at all.
+- **Trivial cases**: Avoid writing test cases whose whole subject is one plain line in src code, e.g. prop spreads, a simple ternary, specific error types, etc. It restates the line rather than pinning behavior anyone could get wrong, and is one more case to read and keep in step.
 
 ## Comments
 

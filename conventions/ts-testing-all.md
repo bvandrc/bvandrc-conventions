@@ -7,7 +7,7 @@ Builds on `./typescript.md`; follow it too. Holds for every TypeScript test suit
   - **Test ID registry**: Every `data-testid` is defined in one registry before it is used, and every suite imports that one: `shared/test-support/selectors.ts` in a repo with unit and end-to-end tests, `playwright/support/constants/selectors.ts` where end-to-end is the only suite.
     - Nest by component.
     - Name a container's own testid `SELF`.
-    - A selector specific to one odd or complicated test can stay in that test. One another test could want goes in the registry the first time it is written.
+    - A selector only one test would reach for, being odd or complicated, can stay in that test. One another test could want goes in the registry the first time it is written.
   - **Layout choices**: Don't test plain layout, like where an element sits or what it's inside. Test user actions, edge cases, and state changes instead.
   - **Locators**: `data-testid` first. Text, role, and class locators only where a testid isn't an option: third-party markup, or an assertion whose point is the visible text or accessible role.
 - **Destructuring from the Selectors registry**: Pull the top namespace out almost always (`const { SAVE_DIALOG } = SELECTORS`). Go on down to a leaf where either holds:

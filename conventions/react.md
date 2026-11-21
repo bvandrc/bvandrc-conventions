@@ -22,7 +22,7 @@ Builds on `./typescript.md`; follow it too.
     - **A second consumer promotes it**: A private module that gains a consumer outside its folder moves up to the shared `hooks/` or `lib/`.
     - **Grouping folders**: A folder that only groups components (`pages/`, `primitives/`, `forms/`) takes no `index.ts`.
 - **React namespace**
-  - **Types**: Off the namespace (`React.ReactNode`, `React.ComponentProps<'div'>`), never imported by name.
+  - **Types**: Off the namespace (`React.ReactNode`, `React.ComponentProps<'div'>`), never imported by name: the `React` global needs no import for a type.
   - **Values**: Imported by name (`import { useId, forwardRef } from 'react'`), never off the namespace.
 - **Component props**
   - **DOM prop types**: A component that passes props through to a DOM element composes from that element's prop types (extend, `Pick`, or `Omit`) rather than redeclaring fields like `className` or `href`.
@@ -33,7 +33,7 @@ Builds on `./typescript.md`; follow it too.
   - **Variant styling**: Styling variants (`variant`, `size`, ...) go through [`cva`](https://cva.style), typed with its `VariantProps`. A `cva` with no variants is just base classes: pass them to `cn` instead. Any other value-to-classes mapping is a module-level constant indexed into, never conditionals inside JSX.
   - **Tailwind sizing**: `size-X`, not `w-X h-X`.
   - **Commenting a `className`**: A comment above a `className` string or `cn(...)` call must describe all of it. A comment that explains only one class or group moves that group into its own `cn()` argument and sits directly above it.
-- **Available packages**: Every React repo has these. Check them before writing your own.
+- **Available packages**: Every React repo should have these installed. Check them before writing your own.
   - **[usehooks-ts](https://usehooks-ts.com)**: General-purpose hooks. Never `useBoolean`; plain `useState` is no more code.
   - **[@bvandrc/react-toolkit](https://github.com/bvandrc/react-toolkit#readme)**: Our own UI behavior hooks and helpers: viewport and device, page lifecycle, scrolling, focus, press and toggle, input, state and timing, and one active tab at a time, plus helpers for sharing and device IDs, and Tailwind's breakpoints as constants. Check its README first.
     - Its `test-support` entry point has Vitest mocks for browser APIs test DOMs lack (`matchMedia`, `visualViewport`, `ResizeObserver`, ...). Use them rather than your own.

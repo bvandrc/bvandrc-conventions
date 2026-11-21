@@ -12,15 +12,14 @@ Applies to every repo, independent of language or framework.
   - **Scope**: optional, lowercase, and names the area the change is in (`test(e2e)`, `fix(sync-outbox)`). Leave it off rather than invent one.
   - **Breaking changes**: mark them with `!` before the colon (`feat!: …`), in a repo that versions a public API.
   - **Squash merges**: a PR lands as one commit whose message is the PR title plus ` (#<number>)`, so the title is the commit message and follows the same form.
-- **Labels**: Every PR and issue carries exactly one _type_ label, and may carry _action_ labels on top.
+- **Labels**: Every PR and issue carries exactly one _type_ label, and may carry action and other labels beside it.
   - **Type labels**: one per Conventional Commits type, matching the PR title's type. A label spells its type out where the prefix is short for it: `feat` is `feature` and `perf` is `performance`. The rest share the type's name: `fix`, `docs`, `chore`, `refactor`, `ci`, `style`, `test`, and `build`.
   - **`bug` and `fix`**: `bug` is for issues, which report the problem, and `fix` is for PRs, which solve it. A PR that fixes a bug is `fix`, never `bug`.
   - **One type, not two**: a PR that fixes a flaky test is `test` only, and its title says `test(e2e): …`. The scope carries what the second label would have, so a filter by label still finds each PR once.
   - **Issues**: titled the way the PR expected to close them will be (`perf: …`, `feat: …`), except a bug, which is `bug: …`, and labeled to match: `bug` for a bug, and otherwise that PR's type label. `question` goes on beside it while the issue is still waiting on an answer before any work can start, and comes off once it has one.
-  - **Renaming GitHub's defaults**: rename `enhancement` to `feature` and `documentation` to `docs`, which carries each across every issue and PR that has it, and rename `perf` to `performance` where a repo has it. `bug` stays, for issues only: a PR labeled `bug` is relabeled `fix`.
   - **Action labels**: a label a workflow reads, like `run ci`, `preview`, or `refresh-data`, is named for what adding it does, and its GitHub description says so. A repo that has one documents it in its own `CLAUDE.md`, beside the workflow, since what it does is that repo's.
-  - **Closing without merging**: close an issue as _not planned_ or _duplicate_ rather than labeling it `wontfix` or `duplicate`. A PR closed unmerged keeps its type label and needs nothing else.
-  - **Unused defaults**: delete `good first issue`, `help wanted`, `invalid`, `wontfix`, `duplicate`, and `accessibility`, which a solo repo never uses. Use `a11y` as a scope instead (`fix(a11y): …`).
+  - **Other labels**: `a11y`, `question`, `help wanted`, `duplicate`, and `wontfix` go on beside the type label, not in place of it, and have no title prefix of their own, except `a11y`, which matches the `a11y` scope (`fix(a11y): …`). Close an issue labeled `duplicate` or `wontfix` with GitHub's matching reason too, _duplicate_ or _not planned_.
+  - **Renaming and deleting GitHub's defaults**: rename `enhancement` to `feature`, `documentation` to `docs`, `perf` to `performance` where a repo has it, and `accessibility` to `a11y`. Renaming carries each across every issue and PR that has it. `bug` stays, for issues only: a PR labeled `bug` is relabeled `fix`. Delete `invalid` and `good first issue`, which a solo repo has no use for.
 - **PR review threads**: Always reply on the thread with what changed (or why it wasn't changed), then mark the thread resolved. Do this for every thread you act on, not just the ones that needed discussion.
 
 ## Tooling

@@ -6,7 +6,7 @@ Coding conventions shared across my projects, synced into each repo for both AI 
 
 | File | Scope |
 | --- | --- |
-| [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, formatting, comments, testing, pull request reviews |
+| [`conventions/all.md`](conventions/all.md) | Practice for every repo: branches, commit messages, labels, formatting, comments, testing, pull request reviews |
 | [`conventions/typescript.md`](conventions/typescript.md) | Language-level TypeScript/JavaScript rules |
 | [`conventions/react.md`](conventions/react.md) | Component, JSX, folder layout, and accessibility rules |
 | [`conventions/ts-testing-all.md`](conventions/ts-testing-all.md) | TypeScript testing rules shared by every suite: unit vs end-to-end, test IDs, locators, naming, assertions |

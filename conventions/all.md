@@ -12,6 +12,7 @@ Applies to every repo, independent of language or framework.
   - **Scope**: optional, lowercase, and names the area the change is in (`test(e2e)`, `fix(sync-outbox)`). Leave it off rather than invent one.
   - **Breaking changes**: mark them with `!` before the colon (`feat!: …`), in a repo that versions a public API.
   - **Squash merges**: a PR lands as one commit whose message is the PR title plus ` (#<number>)`, so the title is the commit message and follows the same form.
+  - **Squashing several PRs together**: only on command, the commits from several PRs are force-squashed into one. Its message takes the same form, with one summary covering them all and every PR number listed at the end, oldest first (`chore: update dependencies (#534, #538, #539)`).
 - **Labels**: Every PR and issue carries exactly one _type_ label, and may carry action and other labels beside it.
   - **Type labels**: one per Conventional Commits type, matching the PR title's type. A label spells its type out where the prefix is short for it: `feat` is `feature` and `perf` is `performance`. The rest share the type's name: `fix`, `docs`, `chore`, `refactor`, `ci`, `style`, `test`, and `build`.
   - **`bug` and `fix`**: `bug` is for issues, which report the problem, and `fix` is for PRs, which solve it. A PR that fixes a bug is `fix`, never `bug`.

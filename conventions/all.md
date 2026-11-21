@@ -7,6 +7,18 @@ Applies to every repo, independent of language or framework.
 - **Branches**
   - **Naming**: Name work branches `<type>/<slug>`, where `<type>` is a Conventional Commits type — `feat`, `fix`, `chore`, `refactor`, `ci`, `docs`, `style`, `test`, `perf`, or `build` — and `<slug>` is a short kebab-case description of the change. Never use a `claude/` prefix or a random session suffix.
   - **Renaming an assigned branch**: The naming rule above overrides the branch name a session is assigned by default — if you were given one, rename it before the first push.
+- **Commit messages and PR titles**: [Conventional Commits](https://www.conventionalcommits.org) — `<type>(<scope>): <summary>`, using the branch types above.
+  - **Summary**: lowercase, imperative, and about what changes for whoever uses the code, not how (`fix: keep saved filters when another device syncs`).
+  - **Scope**: optional, lowercase, and names the area the change is in (`test(e2e)`, `fix(sync-outbox)`). Leave it off rather than invent one.
+  - **Breaking changes**: mark them with `!` before the colon (`feat!: …`), in a repo that versions a public API.
+  - **Squash merges**: a PR lands as one commit whose message is the PR title plus ` (#<number>)`, so the title is the commit message and follows the same form.
+- **Labels**: Every PR and issue carries exactly one _type_ label, and may carry _action_ labels on top.
+  - **Type labels**: one per Conventional Commits type, matching the PR title's type. Three keep GitHub's default names, since every repo already has them: `feat` is `enhancement`, `fix` is `bug`, and `docs` is `documentation`. The rest share the type's name: `chore`, `refactor`, `ci`, `style`, `test`, `perf`, and `build`.
+  - **One type, not two**: a PR that fixes a flaky test is `test` only, and its title says `test(e2e): …`. The scope carries what the second label would have, so a filter by label still finds each PR once.
+  - **Issues**: titled the same way as the PR expected to close them (`bug: …`, `perf: …`), with the type label of that PR. `question` goes on beside it while the issue is still waiting on an answer before any work can start, and comes off once it has one.
+  - **Action labels**: a label a workflow reads, like `run ci`, `preview`, or `refresh-data`, is named for what adding it does, and its GitHub description says so. A repo that has one documents it in its own `CLAUDE.md`, beside the workflow, since what it does is that repo's.
+  - **Closing without merging**: close an issue as _not planned_ or _duplicate_ rather than labeling it `wontfix` or `duplicate`. A PR closed unmerged keeps its type label and needs nothing else.
+  - **Unused defaults**: delete `good first issue`, `help wanted`, `invalid`, `wontfix`, `duplicate`, and `accessibility`, which a solo repo never uses. Use `a11y` as a scope instead (`fix(a11y): …`).
 - **PR review threads**: Always reply on the thread with what changed (or why it wasn't changed), then mark the thread resolved. Do this for every thread you act on, not just the ones that needed discussion.
 
 ## Tooling

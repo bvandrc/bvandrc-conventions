@@ -13,14 +13,25 @@ Applies to every repo, independent of language or framework.
   - **Breaking changes**: mark them with `!` before the colon (`feat!: …`), in a repo that versions a public API.
   - **Squash merges**: a PR lands as one commit whose message is the PR title plus ` (#<number>)`, so the title is the commit message and follows the same form.
   - **Squashing several PRs together**: only on command, the commits from several PRs are force-squashed into one. Its message takes the same form, with one summary covering them all and every PR number listed at the end, oldest first (`chore: update dependencies (#534, #538, #539)`).
+- **PR review threads**: Always reply on the thread with what changed (or why it wasn't changed), then mark the thread resolved. Do this for every thread you act on, not just the ones that needed discussion.
 - **Labels**: Every PR and issue carries a _type_ label, and may carry action and other labels beside it. More than one type label is fine where a change really is more than one kind, like a fix that also adds tests.
   - **Type labels**: one per Conventional Commits type, and a PR's labels include the one for its title's type. A label takes its type's name (`fix`, `docs`, `chore`, ...), spelled out where the prefix abbreviates it (`feat` is `feature`, `perf` is `performance`).
     - **`bug` and `fix`**: `bug` is for issues, which report the problem, and `fix` is for PRs, which solve it. A PR that fixes a bug is `fix`, never `bug`.
   - **Issues**: titled the way the PR expected to close them will be (`perf: …`, `feat: …`), except a bug, which is `bug: …`, and labeled to match: `bug` for a bug, and otherwise that PR's type label. `question` goes on beside it while the issue is still waiting on an answer before any work can start, and comes off once it has one.
-  - **Action labels**: a label a workflow reads, like `run ci`, `preview`, or `refresh-data`, is named for what adding it does, and its GitHub description says so. A repo that has one documents it in its own `CLAUDE.md`, beside the workflow, since what it does is that repo's.
+  - **Action labels**: a label a workflow reads, like `run ci`, `preview`, or `refresh-data`, is named for what adding it does, and its GitHub description says so. A repo that has any documents them in its own `CLAUDE.md`, since what each does is that repo's, in a table of the label, what adding it does, and the workflow that reads it.
   - **Other labels**: labels like `a11y`, `question`, `help wanted`, `duplicate`, and `wontfix` go on beside the type label, not in place of it, and have no title prefix of their own, except `a11y`, which matches the `a11y` scope (`fix(a11y): …`). Close an issue labeled `duplicate` or `wontfix` with GitHub's matching reason too, _duplicate_ or _not planned_.
-  - **Renaming and deleting GitHub's defaults**: rename `enhancement` to `feature`, `documentation` to `docs`, `perf` to `performance` where a repo has it, and `accessibility` to `a11y`. Renaming carries each across every issue and PR that has it. `bug` stays, for issues only: a PR labeled `bug` is relabeled `fix`. Delete `invalid` and `good first issue`, which a solo repo has no use for.
-- **PR review threads**: Always reply on the thread with what changed (or why it wasn't changed), then mark the thread resolved. Do this for every thread you act on, not just the ones that needed discussion.
+  - **GitHub's defaults**: every new repo starts with GitHub's default labels. Bring them in line with the table below, where renaming one carries it across every issue and PR that has it.
+
+| GitHub default | Becomes |
+| --- | --- |
+| `enhancement` | `feature` |
+| `documentation` | `docs` |
+| `accessibility` | `a11y` |
+| `bug` | kept, for issues only; a PR labeled `bug` is relabeled `fix` |
+| `invalid`, `good first issue` | deleted |
+| `question`, `help wanted`, `duplicate`, `wontfix` | kept |
+
+A repo that already has a `perf` label renames it to `performance`.
 
 ## Tooling
 

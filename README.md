@@ -102,7 +102,16 @@ Conventions live outside this file, synced from https://github.com/bvandrc/bvand
 - @conventions/npm-publishing.md — for a package published to npm: releasing, `package.json` publish fields, versioning
 ```
 
-A Python repo imports `all.md`, `python.md`, and, if it publishes to PyPI, `pypi-publishing.md`. Leave `apply-with-claude` off for now: its Claude can only run JavaScript package managers (see [Notes](#notes-1)), so it can't install a Python repo's dependencies or run its checks.
+A Python repo imports `all.md`, `python.md`, and, if it publishes to PyPI, `pypi-publishing.md`. To apply them with Claude, also set `python-version`, so the job sets up Python, and `runs-on: windows-latest` if the repo's dependencies only install on Windows:
+
+```yaml
+with:
+  files: all.md python.md pypi-publishing.md
+  apply-with-claude: true
+  python-version: '3.12'
+  runs-on: windows-latest # only if the dependencies need it
+secrets: inherit
+```
 
 ## Biome config
 
@@ -160,7 +169,7 @@ The key is stored in each repo rather than once here on purpose. Running Claude 
 - **The job inherits the caller's permissions.** It declares none itself, because asking for `id-token: write` would fail validation for callers that haven't granted it, whether they opted in or not.
 - **CI runs on the PR once Claude pushes.** The sync's own push uses `GITHUB_TOKEN`, which starts no workflows; a push with the app's token does. If Claude finds nothing to change, CI doesn't run on the sync PR.
 - **A newer sync discards Claude's commits** along with the rest of the branch, then Claude runs again against the new sync commit.
-- **Claude's shell is limited to JavaScript tooling.** Besides file edits and a handful of `git` commands, it may run only `corepack`, `npm`, `npx`, `pnpm`, and `yarn`. A repo on another stack needs its package manager added to the job's `--allowedTools` before Claude can install its dependencies.
+- **Claude's shell is limited to JavaScript and Python tooling.** Besides file edits and a handful of `git` commands, it may run only `corepack`, `npm`, `npx`, `pnpm`, and `yarn`, and `python`, `pip`, `uv`, `ruff`, `pyright`, `pytest`, and `lint-imports`. A repo on another stack needs its package manager added to the job's `--allowedTools` before Claude can install its dependencies.
 - **Only the pull request path runs Claude.** A dispatch from a non-default branch commits the sync to that branch and stops there.
 
 ## PyPI release actions

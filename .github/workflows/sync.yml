@@ -22,6 +22,21 @@ on:
         required: false
         type: boolean
         default: false
+      python-version:
+        description: >-
+          For a Python repo: the Python version to set up for the
+          apply-with-claude job, so Claude can install the repo's dependencies
+          and run its checks. Leave it empty for any other repo.
+        required: false
+        type: string
+        default: ''
+      runs-on:
+        description: >-
+          The runner for the apply-with-claude job, for a repo whose
+          dependencies only install on one OS (e.g. windows-latest).
+        required: false
+        type: string
+        default: ubuntu-latest
     secrets:
       ANTHROPIC_API_KEY:
         required: false
@@ -115,7 +130,7 @@ jobs:
     if: >-
       inputs.apply-with-claude
       && contains(fromJSON('["created", "updated"]'), needs.sync.outputs.pr-operation)
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runs-on }}
     timeout-minutes: 60
     # No `permissions:` here on purpose: asking for id-token write would fail
     # validation for every caller that hasn't granted it, opted in or not. The
@@ -131,6 +146,12 @@ jobs:
           ref: ${{ needs.sync.outputs.pr-head-sha }}
           fetch-depth: 0
 
+      - name: Set up Python
+        if: inputs.python-version != ''
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ inputs.python-version }}
+
       # Claude pushes from inside the action because its app token is revoked
       # when the action ends. A push with that token, unlike the sync's
       # GITHUB_TOKEN push, starts CI on the pull request.
@@ -142,11 +163,11 @@ jobs:
           claude_args: >-
             --max-turns 80
             --permission-mode acceptEdits
-            --allowedTools "Read,Glob,Grep,Edit,MultiEdit,Write,Bash(git add:*),Bash(git commit:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git push:*),Bash(corepack:*),Bash(npm:*),Bash(npx:*),Bash(pnpm:*),Bash(yarn:*)"
+            --allowedTools "Read,Glob,Grep,Edit,MultiEdit,Write,Bash(git add:*),Bash(git commit:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(git status:*),Bash(git push:*),Bash(corepack:*),Bash(npm:*),Bash(npx:*),Bash(pnpm:*),Bash(yarn:*),Bash(python:*),Bash(pip:*),Bash(uv:*),Bash(ruff:*),Bash(pyright:*),Bash(pytest:*),Bash(lint-imports:*)"
           prompt: |
             You are working on pull request #${{ needs.sync.outputs.pr-number }} in ${{ github.repository }}. It syncs updated convention files into `conventions/` from https://github.com/${{ env.CONVENTIONS_REPO }}. The repo's CLAUDE.md imports those conventions, and says how to format and check the code.
 
-            0. Install the repo's dependencies the way its CLAUDE.md, README, or CI workflows describe, so its format and check scripts run.
+            0. Install the repo's dependencies the way its CLAUDE.md, README, or CI workflows describe, so its format and check scripts run.${{ inputs.python-version != '' && ' Python is set up on the runner: install into it directly with `pip` or `uv pip install --system`, not into a venv, so the tools run by their bare names (`ruff`, `pyright`, `pytest`, ...).' || '' }}
             1. The convention files themselves are already updated; the code isn't yet. Run `git diff origin/${{ github.event.repository.default_branch }} -- conventions/` to see which rules this sync added or changed.
             2. In a single pass over the code outside `conventions/`, fix every violation of the conventions in `conventions/`: those rules this sync added or changed, and any older rule the code has drifted from. Commit as `refactor: apply conventions`.
 

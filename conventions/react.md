@@ -2,6 +2,7 @@
 
 Builds on `./typescript.md`; follow it too.
 
+- **Version**: React 19, with `@types/react` and `@types/react-dom` on the same major. A published library keeps `^18 || ^19` in its `peerDependencies`, so a consumer still on 18 isn't broken. It develops and tests against 19, but writes only what 18 also runs, so `forwardRef` and `<Context.Provider>` stay there.
 - **File naming**: PascalCase for component primitives (`DropdownMenu.tsx`), camelCase for hooks (`useSession.tsx`, `useSettings.ts`), and `.tsx` when the file exports JSX.
 - **Components**: Arrow-function `const` with a named export. Default exports only where something requires one (e.g. lazy-loaded route pages).
 - **Folder layout**: Applies wherever the source root is (`src/`, `client/src/`, ...), and to pages and context providers the same as to components.
@@ -23,12 +24,14 @@ Builds on `./typescript.md`; follow it too.
     - **Grouping folders**: A folder that only groups components (`pages/`, `primitives/`, `forms/`) takes no `index.ts`.
 - **React namespace**
   - **Types**: Off the namespace (`React.ReactNode`, `React.ComponentProps<'div'>`), never imported by name: the `React` global needs no import for a type.
-  - **Values**: Imported by name (`import { useId, forwardRef } from 'react'`), never off the namespace.
+  - **Values**: Imported by name (`import { useId, useState } from 'react'`), never off the namespace.
 - **Component props**
   - **DOM prop types**: A component that passes props through to a DOM element composes from that element's prop types (extend, `Pick`, or `Omit`) rather than redeclaring fields like `className` or `href`.
   - **Component prop types**: The same for props passed through to another component, ours or a package's: export the inner component's props as `<ComponentName>Props` and compose from them.
   - **Spreading props**: Spread many pass-through props; name one or two explicitly.
+  - **Refs**: Take `ref` as a plain prop, which React 19 passes through like any other, rather than wrapping the component in `forwardRef`.
   - **Children**: Declare `children: React.ReactNode` yourself, not `React.PropsWithChildren`, which makes it optional. Mark it optional only where the component is meant to render without any. Put it last in the props type.
+- **Context**: Render the context itself as its provider (`<ThemeContext value={theme}>`), not `<ThemeContext.Provider>`, which React 19 makes unnecessary and plans to deprecate.
 - **Styling**
   - **Variant styling**: Styling variants (`variant`, `size`, ...) go through [`cva`](https://cva.style), typed with its `VariantProps`. A `cva` with no variants is just base classes: pass them to `cn` instead. Any other value-to-classes mapping is a module-level constant indexed into, never conditionals inside JSX.
   - **Tailwind sizing**: `size-X`, not `w-X h-X`.
